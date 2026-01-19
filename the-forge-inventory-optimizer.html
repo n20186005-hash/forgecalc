@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="The Forge Inventory Optimizer - Optimize your ore inventory for The Forge Roblox game. Upload ore counts, compare tank vs damage priorities, and discover the best crafting combinations.">
+    <title>The Forge Inventory Optimizer | Roblox Ore Crafting Tool</title>
+    <!-- SYSTEM DEFAULT ICON (Favicon) - SVG Data URI -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚒️</text></svg>">
+    
+    <!-- Canonical Tag for SEO -->
+    <link rel="canonical" href="https://forgecalc.org/the-forge-inventory-optimizer.html" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #111827; }
+        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b0f19;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(234, 88, 12, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.08) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: #f3f4f6;
+        }
+
+        /* Rarity Gradients */
+        .rarity-godly { background: linear-gradient(135deg, #4c1d95, #7c3aed); border-color: #8b5cf6; }
+        .rarity-mythical { background: linear-gradient(135deg, #831843, #be185d); border-color: #f472b6; }
+        .rarity-legendary { background: linear-gradient(135deg, #7c2d12, #d97706); border-color: #fbbf24; }
+        .rarity-rare { background: linear-gradient(135deg, #1e3a8a, #3b82f6); border-color: #60a5fa; }
+        .rarity-common { background: linear-gradient(135deg, #1f2937, #374151); border-color: #4b5563; }
+        
+        .card-hover { transition: all 0.2s ease-out; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 4px 15px -2px rgba(0, 0, 0, 0.4); border-color: #f97316; }
+
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .glass-panel { background: rgba(17, 24, 39, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .glass-nav { background: rgba(11, 15, 25, 0.85); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        
+        /* Input Number Styling */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+    </style>
+</head>
+<body class="font-sans min-h-screen flex flex-col selection:bg-orange-500 selection:text-white">
+
+    <!-- Navbar -->
+    <nav class="glass-nav sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center gap-3 group">
+                    <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-600/20 transform group-hover:rotate-12 transition-transform duration-300">
+                        <i class="fa-solid fa-hammer text-white text-lg"></i>
+                    </div>
+                    <div class="flex flex-col leading-tight">
+                        <span class="font-bold text-lg tracking-tight hidden sm:block text-white group-hover:text-orange-100 transition">The Forge</span>
+                        <span class="font-bold text-sm tracking-tight text-orange-500 hidden sm:block group-hover:text-orange-400 transition">Optimizer</span>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight sm:hidden text-white">TFC</span>
+                </a>
+
+                <!-- Nav Links & Settings -->
+                <div class="flex items-center gap-3 md:gap-4">
+                    <div class="hidden md:flex items-center space-x-1 bg-gray-800/50 p-1 rounded-lg border border-gray-700/50">
+                        <a href="index.html" class="text-gray-400 hover:text-white hover:bg-gray-700/50 px-3 py-1.5 rounded-md text-sm font-medium transition" data-i18n="nav_calculator">Calculator</a>
+                        <a href="forgecalculator.html" class="text-gray-400 hover:text-white hover:bg-gray-700/50 px-3 py-1.5 rounded-md text-sm font-medium transition" data-i18n="nav_mining">Mining</a>
+                        <a href="the-forge-inventory-optimizer.html" class="bg-gray-700 text-white shadow px-3 py-1.5 rounded-md text-sm font-medium transition" data-i18n="nav_optimizer">Optimizer</a>
+                        <a href="the-forge-mini-wiki.html" class="text-gray-400 hover:text-white hover:bg-gray-700/50 px-3 py-1.5 rounded-md text-sm font-medium transition" data-i18n="nav_wiki">Wiki</a>
+                        <a href="the-forge-calculator-crafting-guide.html" class="text-gray-400 hover:text-white hover:bg-gray-700/50 px-3 py-1.5 rounded-md text-sm font-medium transition" data-i18n="nav_guide">Guide</a>
+                    </div>
+                    
+                    <!-- Language Switcher -->
+                    <button id="lang-toggle" onclick="toggleLanguage()" class="flex items-center gap-2 px-3 py-1.5 rounded-full border border-gray-700 hover:border-orange-500 hover:text-orange-500 transition text-xs font-mono bg-gray-800/80 backdrop-blur group cursor-pointer">
+                        <i class="fa-solid fa-globe group-hover:rotate-180 transition-transform duration-500"></i>
+                        <span id="current-lang" class="font-bold">EN</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Tool Area -->
+    <main class="flex-grow max-w-7xl mx-auto w-full px-2 sm:px-6 lg:px-8 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- Left Column: Optimizer Dashboard & Results -->
+        <div class="lg:col-span-4 space-y-6 flex flex-col">
+            
+            <!-- Controls -->
+            <div class="glass-panel rounded-xl p-5 shadow-xl relative overflow-hidden group">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold text-gray-100 flex items-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles text-orange-500"></i>
+                        <span data-i18n="opt_controls_title">Optimization Controls</span>
+                    </h2>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center bg-gray-900/50 p-3 rounded-lg border border-gray-700">
+                        <span class="text-sm text-gray-400" data-i18n="total_selected">Total Ores Selected</span>
+                        <span id="total-count" class="text-xl font-mono font-bold text-white">0</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="runOptimization()" class="w-full py-3 bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white font-bold rounded-lg shadow-lg shadow-orange-600/20 transition transform active:scale-95 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-bolt"></i> <span data-i18n="btn_optimize">Optimize</span>
+                        </button>
+                        <button onclick="clearInventory()" class="w-full py-3 bg-gray-800 hover:bg-gray-700 text-gray-300 font-bold rounded-lg border border-gray-600 transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-trash-can"></i> <span data-i18n="btn_clear">Clear</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Best Crafts Results -->
+            <div class="glass-panel rounded-xl p-5 shadow-xl flex-grow flex flex-col">
+                <h3 class="font-bold text-gray-100 mb-4 border-b border-gray-700 pb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-trophy text-yellow-500"></i>
+                    <span data-i18n="best_crafts_title">Best Crafts (Your Inventory)</span>
+                </h3>
+
+                <div class="flex gap-2 mb-4 bg-gray-900/50 p-1 rounded-lg">
+                    <button onclick="showResultTab('damage')" id="tab-damage" class="flex-1 py-1.5 text-xs font-bold rounded bg-orange-600 text-white shadow transition" data-i18n="tab_damage">Damage</button>
+                    <button onclick="showResultTab('tank')" id="tab-tank" class="flex-1 py-1.5 text-xs font-bold rounded text-gray-400 hover:bg-gray-800 transition" data-i18n="tab_tank">Tank</button>
+                </div>
+
+                <div id="results-container" class="space-y-4 flex-grow overflow-y-auto custom-scrollbar min-h-[200px]">
+                    <!-- Empty State -->
+                    <div class="flex flex-col items-center justify-center h-full text-center text-gray-500 p-4 border-2 border-dashed border-gray-800 rounded-xl">
+                        <i class="fa-solid fa-box-open text-3xl mb-2 opacity-50"></i>
+                        <p class="text-sm" data-i18n="result_placeholder">Enter your ore inventory and click "Optimize" to see best combinations.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Inventory Input -->
+        <div class="lg:col-span-8 flex flex-col h-[calc(100vh-140px)] min-h-[600px]">
+            <div class="glass-panel rounded-t-xl border-b-0 p-4">
+                <div class="flex flex-col sm:flex-row gap-4 justify-between items-center">
+                    <div class="flex flex-col">
+                        <h2 class="font-bold text-xl flex items-center gap-2">
+                            <i class="fa-solid fa-boxes-stacked text-gray-400"></i>
+                            <span data-i18n="inventory_title">Your Inventory</span>
+                        </h2>
+                        <span class="text-xs text-gray-500 mt-1" data-i18n="inventory_subtitle">Input quantities for optimization</span>
+                    </div>
+                    <div class="relative w-full sm:w-72">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <i class="fa-solid fa-search text-gray-500"></i>
+                        </div>
+                        <input type="text" id="ore-search" class="bg-gray-900 border border-gray-600 text-gray-100 text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 block w-full pl-10 p-2.5 shadow-inner transition placeholder-gray-600" placeholder="Search ores...">
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-900/80 backdrop-blur rounded-b-xl border border-gray-700 p-4 flex-grow overflow-y-auto custom-scrollbar shadow-inner">
+                <div id="ore-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                    <!-- Ores generated by JS -->
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Content Sections (SEO & Info) - RESTORED -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12 text-gray-300">
+        
+        <!-- Intro -->
+        <div class="glass-panel rounded-xl p-8 border-l-4 border-orange-600">
+            <h2 class="text-2xl font-bold text-white mb-4" data-i18n="section_why_title">Why Use The Forge Inventory Optimizer?</h2>
+            <p class="leading-relaxed mb-4" data-i18n="section_why_text">The Forge Inventory Optimizer revolutionizes how you approach crafting. Our sophisticated tool takes the guesswork out of inventory management by analyzing your current ore collection and providing data-driven recommendations for optimal crafting outcomes. Whether you're preparing resilient armor or high-output weapons, our inventory optimizer ensures you make the most efficient use of your valuable ore resources.</p>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="glass-panel p-6 rounded-xl hover:bg-gray-800/50 transition">
+                <i class="fa-solid fa-chart-pie text-orange-500 text-2xl mb-3"></i>
+                <h3 class="text-lg font-bold text-white mb-2" data-i18n="feat_analysis_title">Smart Inventory Analysis</h3>
+                <p class="text-sm" data-i18n="feat_analysis_desc">Automatically analyzes your ore inventory and calculates the most efficient crafting combinations based on available resources, eliminating waste.</p>
+            </div>
+            <div class="glass-panel p-6 rounded-xl hover:bg-gray-800/50 transition">
+                <i class="fa-solid fa-crosshairs text-blue-500 text-2xl mb-3"></i>
+                <h3 class="text-lg font-bold text-white mb-2" data-i18n="feat_targeting_title">Adaptive Trait Targeting</h3>
+                <p class="text-sm" data-i18n="feat_targeting_desc">Balances survivability and damage traits, filtering out wasteful mixes and highlighting the combinations that best fit your goals.</p>
+            </div>
+            <div class="glass-panel p-6 rounded-xl hover:bg-gray-800/50 transition">
+                <i class="fa-solid fa-calculator text-green-500 text-2xl mb-3"></i>
+                <h3 class="text-lg font-bold text-white mb-2" data-i18n="feat_realtime_title">Real-time Calculations</h3>
+                <p class="text-sm" data-i18n="feat_realtime_desc">Get instant success probability percentages for each recommended craft, along with detailed breakdowns of expected outcomes.</p>
+            </div>
+            <div class="glass-panel p-6 rounded-xl hover:bg-gray-800/50 transition">
+                <i class="fa-solid fa-floppy-disk text-purple-500 text-2xl mb-3"></i>
+                <h3 class="text-lg font-bold text-white mb-2" data-i18n="feat_persist_title">Inventory Persistence</h3>
+                <p class="text-sm" data-i18n="feat_persist_desc">Your ore counts are automatically saved locally, allowing you to return to the optimizer without re-entering your data.</p>
+            </div>
+            <div class="glass-panel p-6 rounded-xl hover:bg-gray-800/50 transition">
+                <i class="fa-solid fa-shield-halved text-yellow-500 text-2xl mb-3"></i>
+                <h3 class="text-lg font-bold text-white mb-2" data-i18n="feat_stats_title">Comprehensive Predictions</h3>
+                <p class="text-sm" data-i18n="feat_stats_desc">View estimated damage ranges for weapons and defense ranges for armor to meet specific combat requirements.</p>
+            </div>
+        </div>
+
+        <!-- FAQ -->
+        <div class="space-y-6">
+            <h2 class="text-2xl font-bold text-white border-b border-gray-800 pb-2" data-i18n="faq_title">Frequently Asked Questions</h2>
+            
+            <details class="group glass-panel rounded-lg open:ring-1 open:ring-orange-500/50">
+                <summary class="flex justify-between items-center cursor-pointer p-4 font-medium text-gray-200">
+                    <span data-i18n="faq_q1">What is The Forge Inventory Optimizer?</span>
+                    <i class="fa-solid fa-chevron-down transition group-open:rotate-180"></i>
+                </summary>
+                <div class="p-4 pt-0 text-sm text-gray-400 leading-relaxed" data-i18n="faq_a1">
+                    The Forge Inventory Optimizer is an advanced tool that analyzes your current ore inventory and recommends the best crafting combinations for The Forge Roblox game.
+                </div>
+            </details>
+
+            <details class="group glass-panel rounded-lg open:ring-1 open:ring-orange-500/50">
+                <summary class="flex justify-between items-center cursor-pointer p-4 font-medium text-gray-200">
+                    <span data-i18n="faq_q2">Can I save my inventory data?</span>
+                    <i class="fa-solid fa-chevron-down transition group-open:rotate-180"></i>
+                </summary>
+                <div class="p-4 pt-0 text-sm text-gray-400 leading-relaxed" data-i18n="faq_a2">
+                    Yes, the optimizer automatically saves your ore counts in your browser's local storage. When you return, your previously entered inventory will be preserved.
+                </div>
+            </details>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-950 border-t border-gray-900 py-8 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-gray-500 text-sm mb-3" data-i18n="footer_disclaimer">The Forge Calculator is a fan-made tool. Not affiliated with Roblox.</p>
+            <div class="flex justify-center gap-6 text-sm text-gray-400 font-medium">
+                <a href="the-forge-privacy.html" class="hover:text-orange-500 transition" data-i18n="footer_privacy">Privacy Policy</a>
+                <a href="the-forge-terms.html" class="hover:text-orange-500 transition" data-i18n="footer_terms">Terms of Use</a>
+                <a href="the-forge-contact.html" class="hover:text-orange-500 transition" data-i18n="footer_contact">Contact</a>
+                <a href="the-forge-calculator-crafting-guide.html" class="hover:text-orange-500 transition" data-i18n="footer_faq">FAQs</a>
+            </div>
+            <p class="text-xs text-gray-700 mt-6">&copy; 2026 Forgecalc.org</p>
+        </div>
+    </footer>
+
+    <!-- Logic Script -->
+    <script>
+        // --- DATA ---
+        // Mirroring data from Calculator for consistency
+        const ORES_DB = [
+            { name: "Gargantuan", val: 25.00, trait: "35% chance for 50% explosion damage", type: "dmg" },
+            { name: "Heavenite", val: 20.00, trait: "40% chance to deal 25% Angel Smite", type: "dmg" },
+            { name: "Heart of The Island", val: 18.50, trait: "+30% vitality, heal 50% HP under 20%", type: "tank" },
+            { name: "Stolen Heart", val: 15.40, trait: "20% chance to gain 3% lifesteal", type: "tank" },
+            { name: "Suryafal", val: 15.00, trait: "No special trait", type: "neutral" },
+            { name: "Evil Eye", val: 13.30, trait: "No special trait", type: "neutral" },
+            { name: "Duranite", val: 12.00, trait: "+7.5% durability on armor", type: "tank" },
+            { name: "Galaxite", val: 11.50, trait: "No special trait", type: "neutral" },
+            { name: "Etherealite", val: 11.10, trait: "+35% health boost", type: "tank" },
+            { name: "Iceite", val: 10.50, trait: "Freezes enemies for 2s (25% chance)", type: "dmg" },
+            { name: "Voidstar", val: 10.00, trait: "+33% crit chance, -15% max health", type: "dmg" },
+            { name: "Golem Heart", val: 10.00, trait: "40% crit chance, slow for 3s", type: "tank" },
+            { name: "Gulabite", val: 9.99, trait: "No special trait", type: "neutral" },
+            { name: "Galestor", val: 9.50, trait: "No special trait", type: "neutral" },
+            { name: "Moon Stone", val: 9.50, trait: "+20% weapon damage at night", type: "dmg" },
+            { name: "Cryptex", val: 9.30, trait: "No special trait", type: "neutral" },
+            { name: "Aqujade", val: 9.00, trait: "No special trait", type: "neutral" },
+            { name: "Malachite", val: 8.80, trait: "33% chance to poison enemies", type: "dmg" },
+            { name: "Crimsonite", val: 8.50, trait: "+20% weapon damage boost", type: "dmg" },
+            { name: "Frogite", val: 8.50, trait: "+10% jump height", type: "util" },
+            { name: "Moltenfrost", val: 8.30, trait: "No special trait", type: "neutral" },
+            { name: "Snowite", val: 8.00, trait: "30% chance to inflict Snow", type: "dmg" },
+            { name: "Voidfractal", val: 8.00, trait: "No special trait", type: "neutral" },
+            { name: "Yeti Heart", val: 7.70, trait: "30% crit chance, 10% atk speed", type: "dmg" },
+            { name: "Arcane Crystal", val: 7.50, trait: "No special trait", type: "neutral" },
+            { name: "Lgarite", val: 7.50, trait: "No special trait", type: "neutral" },
+            { name: "Mistvein", val: 7.20, trait: "No special trait", type: "neutral" },
+            { name: "Mosasaursit", val: 7.00, trait: "+35% HP, -25% Speed", type: "tank" },
+            { name: "Darkryte", val: 6.30, trait: "Shadow Dodge (15% chance)", type: "tank" },
+            { name: "Sanctis", val: 6.00, trait: "18% more stamina", type: "util" },
+            { name: "Demonite", val: 5.50, trait: "25% Backfire dmg, 15% Burn", type: "dmg" },
+            { name: "Velchire", val: 5.50, trait: "20% extra movement speed", type: "util" },
+            { name: "Prismatic Heart", val: 5.50, trait: "20% crit chance, 15% slow", type: "dmg" },
+            { name: "Rainbow Crystal", val: 5.25, trait: "No special trait", type: "neutral" },
+            { name: "Magmaite", val: 5.00, trait: "20% chance for Magma Explosion", type: "dmg" },
+            { name: "Tide Carve", val: 4.70, trait: "No special trait", type: "neutral" },
+            { name: "Lightite", val: 4.60, trait: "+15% movement speed", type: "util" },
+            { name: "Fireite", val: 4.50, trait: "30% chance to inflict Burn", type: "dmg" },
+            { name: "Frost Fossil", val: 4.50, trait: "+17.5% phys dmg, -5% speed", type: "dmg" },
+            { name: "Neurotite", val: 4.30, trait: "No special trait", type: "neutral" },
+            { name: "Larimar", val: 4.10, trait: "No special trait", type: "neutral" },
+            { name: "Eye Ore", val: 4.00, trait: "-10% Max HP, +15% DMG", type: "dmg" },
+            { name: "Scheelite", val: 3.70, trait: "No special trait", type: "neutral" },
+            { name: "Mythril", val: 3.50, trait: "+15% defense boost", type: "tank" },
+            { name: "Blue Crystal", val: 3.40, trait: "No special trait", type: "neutral" },
+            { name: "Aetherit", val: 3.40, trait: "+8% atk speed", type: "dmg" },
+            { name: "Rivalite", val: 3.33, trait: "+20% crit chance", type: "dmg" },
+            { name: "Crimson Crystal", val: 3.30, trait: "No special trait", type: "neutral" },
+            { name: "Green Crystal", val: 3.20, trait: "No special trait", type: "neutral" },
+            { name: "Magenta Crystal", val: 3.10, trait: "No special trait", type: "neutral" },
+            { name: "Graphite", val: 3.10, trait: "20% chance for shield", type: "tank" },
+            { name: "Uranium", val: 3.00, trait: "Radioactive damage aura", type: "dmg" },
+            { name: "Orange Crystal", val: 3.00, trait: "No special trait", type: "neutral" },
+            { name: "Ruby", val: 2.95, trait: "No special trait", type: "neutral" },
+            { name: "Pumice", val: 2.90, trait: "No special trait", type: "neutral" },
+            { name: "Sulfur", val: 2.75, trait: "No special trait", type: "neutral" },
+            { name: "Tungsten", val: 2.60, trait: "No special trait", type: "neutral" },
+            { name: "Emerald", val: 2.55, trait: "No special trait", type: "neutral" },
+            { name: "Cuprite", val: 2.43, trait: "No special trait", type: "neutral" },
+            { name: "Obsidian", val: 2.35, trait: "+30% health boost", type: "tank" },
+            { name: "Sapphire", val: 2.25, trait: "No special trait", type: "neutral" },
+            { name: "Dark Boneite", val: 2.25, trait: "No special trait", type: "neutral" },
+            { name: "Slimeite", val: 2.25, trait: "No special trait", type: "neutral" },
+            { name: "Diamond", val: 2.00, trait: "No special trait", type: "neutral" },
+            { name: "Topaz", val: 1.75, trait: "No special trait", type: "neutral" },
+            { name: "Amethyst", val: 1.65, trait: "No special trait", type: "neutral" },
+            { name: "Volcanic Rock", val: 1.55, trait: "No special trait", type: "neutral" },
+            { name: "Quartz", val: 1.50, trait: "No special trait", type: "neutral" },
+            { name: "Lapis Lazuli", val: 1.30, trait: "No special trait", type: "neutral" },
+            { name: "Poopite", val: 1.20, trait: "Bad smell aura 15% dmg", type: "dmg" },
+            { name: "Boneite", val: 1.20, trait: "No special trait", type: "neutral" },
+            { name: "Titanium", val: 1.15, trait: "No special trait", type: "neutral" },
+            { name: "Aite", val: 1.10, trait: "No special trait", type: "neutral" },
+            { name: "Cobalt", val: 1.00, trait: "No special trait", type: "neutral" },
+            { name: "Coinite", val: 1.00, trait: "No special trait", type: "neutral" },
+            { name: "Bananaite", val: 0.85, trait: "No special trait", type: "neutral" },
+            { name: "Mushroomite", val: 0.80, trait: "No special trait", type: "neutral" },
+            { name: "Platinum", val: 0.80, trait: "No special trait", type: "neutral" },
+            { name: "Cardboardite", val: 0.70, trait: "No special trait", type: "neutral" },
+            { name: "Gold", val: 0.65, trait: "No special trait", type: "neutral" },
+            { name: "Silver", val: 0.50, trait: "No special trait", type: "neutral" },
+            { name: "Tin", val: 0.42, trait: "No special trait", type: "neutral" },
+            { name: "Iron", val: 0.35, trait: "No special trait", type: "neutral" },
+            { name: "Copper", val: 0.30, trait: "No special trait", type: "neutral" },
+            { name: "Sandstone", val: 0.25, trait: "No special trait", type: "neutral" },
+            { name: "Stone", val: 0.20, trait: "No special trait", type: "neutral" },
+            { name: "Vooite", val: 0.00, trait: "No special trait", type: "neutral" },
+            { name: "Fichillium", val: 0.00, trait: "No special trait", type: "neutral" }
+        ];
+
+        // --- I18N ---
+        const I18N = {
+            en: {
+                nav_calculator: "Calculator",
+                nav_optimizer: "Optimizer",
+                nav_wiki: "Wiki",
+                nav_mining: "Mining",
+                nav_guide: "Guide",
+                opt_controls_title: "Optimization Controls",
+                total_selected: "Total Ores Selected",
+                btn_optimize: "Optimize",
+                btn_clear: "Clear Inventory",
+                best_crafts_title: "Best Crafts (Your Inventory)",
+                tab_damage: "Damage",
+                tab_tank: "Tank",
+                result_placeholder: "Enter your ore inventory and click \"Optimize\" to see best combinations.",
+                inventory_title: "Your Inventory",
+                inventory_subtitle: "Input quantities for optimization",
+                search_placeholder: "Search ores...",
+                section_why_title: "Why Use The Forge Inventory Optimizer?",
+                section_why_text: "The Forge Inventory Optimizer revolutionizes how you approach crafting in the popular Roblox game The Forge. Our sophisticated tool takes the guesswork out of inventory management by analyzing your current ore collection.",
+                feat_analysis_title: "Smart Inventory Analysis",
+                feat_analysis_desc: "Automatically analyzes your ore inventory and calculates the most efficient crafting combinations based on available resources, eliminating waste.",
+                feat_targeting_title: "Adaptive Trait Targeting",
+                feat_targeting_desc: "Balances survivability and damage traits, filtering out wasteful mixes and highlighting the combinations that best fit your current goals.",
+                feat_realtime_title: "Real-time Calculations",
+                feat_realtime_desc: "Get instant success probability percentages for each recommended craft, along with detailed breakdowns of ore requirements.",
+                feat_persist_title: "Inventory Persistence",
+                feat_persist_desc: "Your ore counts are automatically saved locally, allowing you to return to the optimizer without re-entering your inventory data.",
+                feat_stats_title: "Comprehensive Predictions",
+                feat_stats_desc: "View estimated damage ranges for weapons and defense ranges for armor to meet your specific combat requirements.",
+                faq_title: "Frequently Asked Questions",
+                faq_q1: "What is The Forge Inventory Optimizer?",
+                faq_a1: "The Forge Inventory Optimizer is an advanced tool that analyzes your current ore inventory and recommends the best crafting combinations for The Forge Roblox game.",
+                faq_q2: "Can I save my inventory data?",
+                faq_a2: "Yes, the inventory optimizer automatically saves your ore counts in your browser's local storage. When you return to the page, your previously entered inventory will be preserved.",
+                footer_disclaimer: "The Forge Calculator is a fan-made tool. Not affiliated with Roblox.",
+                footer_privacy: "Privacy Policy",
+                footer_contact: "Contact",
+                footer_faq: "FAQs",
+                label_mult: "Multiplier",
+                label_traits: "Active Traits",
+                label_dps: "Est. DPS",
+                label_hp: "Est. HP",
+                alert_no_ores: "Please add ores to your inventory first!"
+            },
+            zh: {
+                nav_calculator: "計算機",
+                nav_optimizer: "庫存優化器",
+                nav_wiki: "官方維基",
+                nav_mining: "採礦",
+                nav_guide: "指南",
+                opt_controls_title: "優化控制",
+                total_selected: "已選礦石總數",
+                btn_optimize: "開始優化",
+                btn_clear: "清空庫存",
+                best_crafts_title: "最佳鍛造配方 (基於您的庫存)",
+                tab_damage: "傷害優先",
+                tab_tank: "坦度優先",
+                result_placeholder: "輸入您的礦石庫存並點擊「開始優化」以查看最佳組合。",
+                inventory_title: "您的庫存",
+                inventory_subtitle: "輸入數量以進行優化",
+                search_placeholder: "搜尋礦石...",
+                section_why_title: "為什麼使用 The Forge 庫存優化器？",
+                section_why_text: "The Forge 庫存優化器徹底改變了您在 Roblox 遊戲 The Forge 中的鍛造方式。我們的智能工具通過分析您當前的礦石收藏，消除庫存管理中的猜測，提供數據驅動的最佳鍛造建議。",
+                feat_analysis_title: "智能庫存分析",
+                feat_analysis_desc: "自動分析您的礦石庫存，並根據可用資源計算最有效的鍛造組合，消除浪費。",
+                feat_targeting_title: "自適應特性目標",
+                feat_targeting_desc: "平衡生存和傷害特性，過濾掉浪費的混合，並突出最符合您當前目標的組合。",
+                feat_realtime_title: "即時計算",
+                feat_realtime_desc: "獲得每個推薦鍛造的即時成功概率百分比，以及礦石需求的詳細明細。",
+                feat_persist_title: "庫存持久化",
+                feat_persist_desc: "您的礦石數量會自動保存在本地，允許您返回優化器而無需重新輸入庫存數據。",
+                feat_stats_title: "綜合預測",
+                feat_stats_desc: "查看武器的預估傷害範圍和防具的防禦範圍，以滿足您的特定戰鬥需求。",
+                faq_title: "常見問題",
+                faq_q1: "什麼是 The Forge 庫存優化器？",
+                faq_a1: "The Forge 庫存優化器是一個高級工具，可以分析您當前的礦石庫存，並為 The Forge Roblox 遊戲推薦最佳鍛造組合。",
+                faq_q2: "我可以保存我的庫存數據嗎？",
+                faq_a2: "是的，庫存優化器會自動將您的礦石計數保存在瀏覽器的本地存儲中。當您返回頁面時，將保留您之前輸入的庫存。",
+                footer_disclaimer: "The Forge Calculator 是粉絲製作的工具。與 Roblox 無關。",
+                footer_privacy: "隱私政策",
+                footer_contact: "聯繫我們",
+                footer_faq: "常見問題",
+                label_mult: "倍率",
+                label_traits: "激活特性",
+                label_dps: "預估秒傷",
+                label_hp: "預估血量",
+                alert_no_ores: "請先添加礦石到您的庫存！"
+            }
+        };
+
+        // --- STATE ---
+        let state = {
+            lang: 'en',
+            inventory: {}, // Map: index -> count
+            mode: 'damage' // 'damage' or 'tank' (display mode)
+        };
+
+        // --- DOM REFERENCES ---
+        const oreGrid = document.getElementById('ore-grid');
+        const oreSearch = document.getElementById('ore-search');
+        const totalCountEl = document.getElementById('total-count');
+        const resultsContainer = document.getElementById('results-container');
+        const currentLangSpan = document.getElementById('current-lang');
+        
+        // --- LOCAL STORAGE KEY ---
+        const LS_LANG_KEY = 'forge_lang_pref';
+
+        // --- LOGIC ---
+
+        function t(key) {
+            return I18N[state.lang][key] || key;
+        }
+
+        function toggleLanguage() {
+            state.lang = state.lang === 'en' ? 'zh' : 'en';
+            localStorage.setItem(LS_LANG_KEY, state.lang);
+            currentLangSpan.innerText = state.lang.toUpperCase();
+            applyLanguage();
+        }
+
+        function initLanguage() {
+            const saved = localStorage.getItem(LS_LANG_KEY);
+            if (saved === 'zh' || saved === 'en') {
+                state.lang = saved;
+            } else {
+                state.lang = 'en';
+            }
+            currentLangSpan.innerText = state.lang.toUpperCase();
+        }
+
+        function applyLanguage() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if(I18N[state.lang][key]) el.innerText = I18N[state.lang][key];
+            });
+            oreSearch.placeholder = t('search_placeholder');
+        }
+
+        function getRarityClass(val) {
+            if (val >= 20) return 'rarity-godly border-b-2';
+            if (val >= 10) return 'rarity-mythical border-b-2';
+            if (val >= 5) return 'rarity-legendary border-b-2';
+            if (val >= 2) return 'rarity-rare border-b-2';
+            return 'rarity-common border-b-2';
+        }
+
+        function renderInventory() {
+            const query = oreSearch.value.toLowerCase();
+            oreGrid.innerHTML = '';
+            
+            ORES_DB.forEach((ore, index) => {
+                if (ore.name.toLowerCase().includes(query)) {
+                    const count = state.inventory[index] || 0;
+                    const card = document.createElement('div');
+                    card.className = `p-3 rounded-lg flex flex-col justify-between cursor-default card-hover bg-gray-800 border-x border-t border-gray-700 relative group ${getRarityClass(ore.val)}`;
+                    
+                    // Input HTML
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-sm text-gray-200 truncate w-20 leading-tight">${ore.name}</h4>
+                            <span class="text-orange-400 font-mono text-[10px] font-bold bg-gray-900/50 rounded px-1">${ore.val.toFixed(2)}x</span>
+                        </div>
+                        <div class="flex items-center gap-2 mt-auto">
+                            <button onclick="updateCount(${index}, -1)" class="w-6 h-6 bg-gray-700 hover:bg-gray-600 rounded text-white text-xs flex items-center justify-center transition">-</button>
+                            <input type="number" min="0" value="${count}" onchange="setCount(${index}, this.value)" class="w-full bg-gray-900 border border-gray-600 rounded text-center text-sm text-white py-0.5 focus:ring-1 focus:ring-orange-500 outline-none">
+                            <button onclick="updateCount(${index}, 1)" class="w-6 h-6 bg-gray-700 hover:bg-orange-600 rounded text-white text-xs flex items-center justify-center transition">+</button>
+                        </div>
+                    `;
+                    oreGrid.appendChild(card);
+                }
+            });
+            updateTotalCount();
+        }
+
+        function updateCount(index, delta) {
+            const current = state.inventory[index] || 0;
+            const newVal = Math.max(0, current + delta);
+            state.inventory[index] = newVal;
+            saveInventory();
+            renderInventory(); // Re-render to update UI (could be optimized)
+        }
+
+        function setCount(index, val) {
+            const num = parseInt(val);
+            state.inventory[index] = isNaN(num) ? 0 : Math.max(0, num);
+            saveInventory();
+            updateTotalCount();
+        }
+
+        function updateTotalCount() {
+            const total = Object.values(state.inventory).reduce((a, b) => a + b, 0);
+            totalCountEl.innerText = total;
+        }
+
+        function saveInventory() {
+            localStorage.setItem('forge_inventory', JSON.stringify(state.inventory));
+        }
+
+        function loadInventory() {
+            const saved = localStorage.getItem('forge_inventory');
+            if (saved) {
+                state.inventory = JSON.parse(saved);
+                renderInventory();
+            }
+        }
+
+        function clearInventory() {
+            if(confirm("Are you sure you want to clear your entire inventory?")) {
+                state.inventory = {};
+                saveInventory();
+                renderInventory();
+                resultsContainer.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-center text-gray-500 p-4 border-2 border-dashed border-gray-800 rounded-xl"><i class="fa-solid fa-box-open text-3xl mb-2 opacity-50"></i><p class="text-sm">${t('result_placeholder')}</p></div>`;
+            }
+        }
+
+        // --- OPTIMIZER LOGIC (SIMULATED) ---
+        function runOptimization() {
+            const totalItems = Object.values(state.inventory).reduce((a, b) => a + b, 0);
+            if (totalItems < 3) {
+                alert(t('alert_no_ores'));
+                return;
+            }
+
+            // Create flat list of available ore indices based on counts
+            let pool = [];
+            Object.keys(state.inventory).forEach(idx => {
+                const count = state.inventory[idx];
+                for(let i=0; i<count; i++) pool.push(parseInt(idx));
+            });
+
+            // Sort logic: 
+            // Damage: Sort by Val desc
+            // Tank: Sort by Val desc but boost "Tank" type ores implicitly (simplified logic for demo)
+            
+            const damageRecipe = optimizeForType(pool, 'dmg');
+            const tankRecipe = optimizeForType(pool, 'tank');
+
+            renderResultsUI(damageRecipe, tankRecipe);
+        }
+
+        function optimizeForType(pool, type) {
+            // Greedy approach: Sort pool based on criteria, take top 4
+            // Criteria: Base Value + Bonus if type matches
+            
+            const scoredPool = pool.map(idx => {
+                const ore = ORES_DB[idx];
+                let score = ore.val;
+                // Simple heuristic: Boost score if ore type matches target
+                if (type === 'tank' && ore.type === 'tank') score *= 1.2;
+                if (type === 'dmg' && ore.type === 'dmg') score *= 1.1; 
+                return { idx, score, val: ore.val, name: ore.name, trait: ore.trait };
+            });
+
+            // Sort desc
+            scoredPool.sort((a, b) => b.score - a.score);
+
+            // Take top 4
+            const selected = scoredPool.slice(0, 4);
+            
+            // Calculate stats
+            const avgMult = selected.reduce((sum, item) => sum + item.val, 0) / selected.length;
+            
+            // Count Traits
+            const traits = {};
+            selected.forEach(i => {
+                if (i.trait !== "No special trait") traits[i.trait] = (traits[i.trait] || 0) + 1;
+            });
+
+            return {
+                ores: selected,
+                avgMult: avgMult,
+                traits: Object.keys(traits)
+            };
+        }
+
+        function renderResultsUI(dmgRecipe, tankRecipe) {
+            // Check active tab
+            const activeData = state.mode === 'damage' ? dmgRecipe : tankRecipe;
+            
+            resultsContainer.innerHTML = '';
+
+            const resultCard = document.createElement('div');
+            resultCard.className = "bg-gray-800 rounded-lg p-4 border border-gray-700 fade-in";
+            
+            let oresHtml = '';
+            activeData.ores.forEach(o => {
+                oresHtml += `
+                    <div class="flex justify-between items-center text-sm border-b border-gray-700 last:border-0 py-1">
+                        <span class="${getRarityText(o.val)} font-medium">${o.name}</span>
+                        <span class="text-gray-400 font-mono">${o.val}x</span>
+                    </div>
+                `;
+            });
+
+            let traitsHtml = '';
+            if (activeData.traits.length > 0) {
+                activeData.traits.forEach(t => {
+                    traitsHtml += `<li class="text-xs text-yellow-500 list-disc ml-4">${t}</li>`;
+                });
+            } else {
+                traitsHtml = `<li class="text-xs text-gray-500 italic">No special traits</li>`;
+            }
+
+            resultCard.innerHTML = `
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-sm font-bold text-gray-300 uppercase tracking-wider">${t('label_mult')}</span>
+                    <span class="text-2xl font-bold text-orange-500">${activeData.avgMult.toFixed(2)}x</span>
+                </div>
+                
+                <div class="bg-gray-900/50 rounded p-2 mb-3">
+                    ${oresHtml}
+                </div>
+
+                <div class="mb-2">
+                    <span class="text-xs font-bold text-gray-400 uppercase">${t('label_traits')}</span>
+                    <ul class="mt-1 space-y-1">
+                        ${traitsHtml}
+                    </ul>
+                </div>
+                
+                <div class="mt-4 pt-3 border-t border-gray-700 flex justify-between">
+                    <div class="text-center w-1/2 border-r border-gray-700">
+                         <span class="block text-[10px] text-gray-500 uppercase">${t('label_dps')}</span>
+                         <span class="text-white font-mono">${(activeData.avgMult * 15).toFixed(0)}</span>
+                    </div>
+                    <div class="text-center w-1/2">
+                         <span class="block text-[10px] text-gray-500 uppercase">${t('label_hp')}</span>
+                         <span class="text-white font-mono">+${(activeData.avgMult * 10).toFixed(0)}%</span>
+                    </div>
+                </div>
+            `;
+
+            resultsContainer.appendChild(resultCard);
+        }
+
+        function getRarityText(val) {
+            if (val >= 20) return 'text-purple-400';
+            if (val >= 10) return 'text-pink-400';
+            if (val >= 5) return 'text-yellow-400';
+            if (val >= 2) return 'text-blue-400';
+            return 'text-gray-300';
+        }
+
+        function showResultTab(mode) {
+            state.mode = mode;
+            // Update Tab Styles
+            const tabDmg = document.getElementById('tab-damage');
+            const tabTank = document.getElementById('tab-tank');
+            
+            if (mode === 'damage') {
+                tabDmg.className = "flex-1 py-1.5 text-xs font-bold rounded bg-orange-600 text-white shadow transition";
+                tabTank.className = "flex-1 py-1.5 text-xs font-bold rounded text-gray-400 hover:bg-gray-800 transition";
+            } else {
+                tabDmg.className = "flex-1 py-1.5 text-xs font-bold rounded text-gray-400 hover:bg-gray-800 transition";
+                tabTank.className = "flex-1 py-1.5 text-xs font-bold rounded bg-orange-600 text-white shadow transition";
+            }
+
+            // Re-run optimize to refresh view if results exist
+            const total = Object.values(state.inventory).reduce((a,b)=>a+b,0);
+            if(total >= 3) runOptimization();
+        }
+
+        // --- INIT ---
+        oreSearch.addEventListener('input', renderInventory);
+        initLanguage();
+        loadInventory();
+        renderInventory();
+        applyLanguage();
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Terms of Use for The Forge Calculator.">
+    <title>Terms of Use | The Forge Calculator</title>
+    <!-- SYSTEM DEFAULT ICON (Favicon) - SVG Data URI -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚒️</text></svg>">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        gray: {
+                            750: '#2d3748',
+                            850: '#1a202c',
+                            950: '#0b0f19', // Darker background matching index
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0b0f19; }
+        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b0f19;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(234, 88, 12, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.08) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: #e2e8f0;
+        }
+
+        .glass-panel { background: rgba(17, 24, 39, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .glass-nav { background: rgba(11, 15, 25, 0.85); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Typography for policy text */
+        .policy-text h2 { font-size: 1.5rem; font-weight: 700; color: white; margin-top: 2rem; margin-bottom: 1rem; border-bottom: 1px solid #374151; padding-bottom: 0.5rem; }
+        .policy-text h3 { font-size: 1.25rem; font-weight: 600; color: #fb923c; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+        .policy-text p { margin-bottom: 1rem; color: #d1d5db; line-height: 1.7; }
+        .policy-text ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; color: #d1d5db; }
+        .policy-text li { margin-bottom: 0.5rem; }
+    </style>
+</head>
+<body class="text-gray-100 font-sans min-h-screen flex flex-col selection:bg-orange-500 selection:text-white">
+
+    <!-- Navbar -->
+    <nav class="glass-nav sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center gap-3 group">
+                    <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-600/20 transform group-hover:rotate-12 transition-transform duration-300">
+                        <i class="fa-solid fa-hammer text-white text-lg"></i>
+                    </div>
+                    <div class="flex flex-col leading-tight">
+                        <span class="font-bold text-lg tracking-tight hidden sm:block text-white group-hover:text-orange-100 transition">The Forge</span>
+                        <span class="font-bold text-sm tracking-tight text-orange-500 hidden sm:block group-hover:text-orange-400 transition">Terms</span>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight sm:hidden text-white">TFC</span>
+                </a>
+
+                <!-- Nav Links -->
+                <div class="flex items-center gap-3 md:gap-4">
+                    <div class="hidden md:flex items-center space-x-1 bg-gray-800/50 p-1 rounded-lg border border-gray-700/50">
+                        <a href="index.html" class="text-gray-400 hover:text-white hover:bg-gray-700/50 px-3 py-1.5 rounded-md text-sm font-medium transition" data-i18n="nav_calculator">Calculator</a>
+                        <a href="forgecalculator.html" class="text-gray-400 hover:text-white hover:bg-gray-700/50 px-3 py-1.5 rounded-md text-sm font-medium transition" data-i18n="nav_mining">Mining</a>
+                        <a href="the-forge-inventory-optimizer.html" class="text-gray-400 hover:text-white hover:bg-gray-700/50 px-3 py-1.5 rounded-md text-sm font-medium transition" data-i18n="nav_optimizer">Optimizer</a>
+                        <a href="the-forge-mini-wiki.html" class="text-gray-400 hover:text-white hover:bg-gray-700/50 px-3 py-1.5 rounded-md text-sm font-medium transition" data-i18n="nav_wiki">Wiki</a>
+                        <a href="the-forge-terms.html" class="bg-gray-700 text-white shadow px-3 py-1.5 rounded-md text-sm font-medium transition" data-i18n="nav_terms">Terms</a>
+                    </div>
+                    
+                    <!-- Language Switcher -->
+                    <button id="lang-toggle" onclick="toggleLanguage()" class="flex items-center gap-2 px-3 py-1.5 rounded-full border border-gray-700 hover:border-orange-500 hover:text-orange-500 transition text-xs font-mono bg-gray-800/80 backdrop-blur group cursor-pointer">
+                        <i class="fa-solid fa-globe group-hover:rotate-180 transition-transform duration-500"></i>
+                        <span id="current-lang" class="font-bold">EN</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-12 fade-in">
+        <h1 class="text-4xl font-black text-white mb-8" data-i18n="page_title">Terms of Use</h1>
+        
+        <div class="glass-panel p-8 rounded-xl policy-text shadow-2xl">
+            <p data-i18n="intro">
+                By using this site, you agree to these terms. We developed this tool to provide convenience for planners and creators; please use it responsibly.
+            </p>
+
+            <h2 data-i18n="acceptable_title">Acceptable Use</h2>
+            <ul data-i18n-html="acceptable_list">
+                <li>Do not abuse this website, overload services, or interfere with other users.</li>
+                <li>Data is for personal or team planning only; automated scraping is prohibited.</li>
+                <li>Do not misrepresent outputs as official game guarantees.</li>
+                <li>Respect intellectual property and any game terms applicable to the data.</li>
+            </ul>
+
+            <h2 data-i18n="disclaimer_title">Disclaimer</h2>
+            <p data-i18n="disclaimer_p1">
+                This calculator is provided "as is". Probabilities and tables strive to reflect game data, but results are not guaranteed. We are not responsible for any losses incurred from using this tool.
+            </p>
+            <p data-i18n="disclaimer_p2">
+                By using this site, you accept the risk of inaccurate or outdated information and agree to independently verify important decisions.
+            </p>
+
+            <h2 data-i18n="changes_title">Changes and Availability</h2>
+            <p data-i18n="changes_p1">
+                We may update or suspend site operations to ensure accuracy and performance. When terms change, we will update this page and modify the version notes.
+            </p>
+            <p data-i18n="changes_p2">
+                Access rates may be limited or suspended if usage threatens system stability or violates these terms.
+            </p>
+
+            <h2 data-i18n="ownership_title">Ownership</h2>
+            <p data-i18n="ownership_p1">
+                The Forge Calculator's code, assets, and branding belong to their respective owners. Using this site does not imply ownership of the codebase or visual assets.
+            </p>
+
+            <h2 data-i18n="law_title">Applicable Law</h2>
+            <p data-i18n="law_p1">
+                These terms are governed by applicable local laws. Any disputes related to this site should first be resolved through good-faith communication.
+            </p>
+
+            <h2 data-i18n="contact_title">Questions about these terms?</h2>
+            <p data-i18n="contact_p1">
+                If you have questions about these Terms of Use, need clarification on any policy, or want to report potential violations, please contact us via the contact page or email n20186005@gmail.com. We are here to help and will respond to your inquiry as soon as possible.
+            </p>
+
+            <h2 data-i18n="feedback_title">Feedback Welcome</h2>
+            <p data-i18n="feedback_p1">
+                Your feedback helps us improve these terms to make them clearer and more understandable for all users. If you have any suggestions on how to make our terms more user-friendly or comprehensive, please feel free to contact us.
+            </p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-950 border-t border-gray-900 py-8 mt-auto z-10 relative">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-gray-600 text-sm mb-3">
+                <span data-i18n="footer_disclaimer">The Forge Calculator is a fan-made tool. Not affiliated with Roblox.</span>
+            </p>
+            <div class="flex justify-center flex-wrap gap-x-6 gap-y-2 text-sm text-gray-500 font-medium mb-4">
+                <a href="the-forge-privacy.html" class="hover:text-orange-500 transition" data-i18n="footer_privacy">Privacy Policy</a>
+                <a href="the-forge-terms.html" class="hover:text-orange-500 transition" data-i18n="footer_terms">Terms of Use</a>
+                <a href="the-forge-contact.html" class="hover:text-orange-500 transition" data-i18n="footer_contact">Contact</a>
+                <a href="the-forge-calculator-crafting-guide.html" class="hover:text-orange-500 transition" data-i18n="footer_faq">FAQs</a>
+            </div>
+            <p class="text-[10px] text-gray-800 mt-2 uppercase tracking-widest">&copy; 2026 Forgecalc.org</p>
+        </div>
+    </footer>
+
+    <!-- I18N Script -->
+    <script>
+        const I18N = {
+            en: {
+                nav_calculator: "Calculator", nav_optimizer: "Optimizer", nav_wiki: "Wiki", nav_terms: "Terms", nav_mining: "Mining",
+                page_title: "Terms of Use",
+                intro: "By using this site, you agree to these terms. We developed this tool to provide convenience for planners and creators; please use it responsibly.",
+                acceptable_title: "Acceptable Use",
+                acceptable_list: "<li>Do not abuse this website, overload services, or interfere with other users.</li><li>Data is for personal or team planning only; automated scraping is prohibited.</li><li>Do not misrepresent outputs as official game guarantees.</li><li>Respect intellectual property and any game terms applicable to the data.</li>",
+                disclaimer_title: "Disclaimer",
+                disclaimer_p1: "This calculator is provided \"as is\". Probabilities and tables strive to reflect game data, but results are not guaranteed. We are not responsible for any losses incurred from using this tool.",
+                disclaimer_p2: "By using this site, you accept the risk of inaccurate or outdated information and agree to independently verify important decisions.",
+                changes_title: "Changes and Availability",
+                changes_p1: "We may update or suspend site operations to ensure accuracy and performance. When terms change, we will update this page and modify the version notes.",
+                changes_p2: "Access rates may be limited or suspended if usage threatens system stability or violates these terms.",
+                ownership_title: "Ownership",
+                ownership_p1: "The Forge Calculator's code, assets, and branding belong to their respective owners. Using this site does not imply ownership of the codebase or visual assets.",
+                law_title: "Applicable Law",
+                law_p1: "These terms are governed by applicable local laws. Any disputes related to this site should first be resolved through good-faith communication.",
+                contact_title: "Questions about these terms?",
+                contact_p1: "If you have questions about these Terms of Use, need clarification on any policy, or want to report potential violations, please contact us via the contact page or email n20186005@gmail.com. We are here to help and will respond to your inquiry as soon as possible.",
+                feedback_title: "Feedback Welcome",
+                feedback_p1: "Your feedback helps us improve these terms to make them clearer and more understandable for all users. If you have any suggestions on how to make our terms more user-friendly or comprehensive, please feel free to contact us.",
+                footer_disclaimer: "The Forge Calculator is a fan-made tool. Not affiliated with Roblox.",
+                footer_privacy: "Privacy Policy", footer_terms: "Terms of Use", footer_contact: "Contact", footer_faq: "FAQs"
+            },
+            zh: {
+                nav_calculator: "計算機", nav_optimizer: "庫存優化", nav_wiki: "維基百科", nav_terms: "使用條款", nav_mining: "採礦計算器",
+                page_title: "使用條款",
+                intro: "使用即表示您同意這些條款。我們開發此工具旨在為規劃者和創作者提供便利；請負責任地使用它。",
+                acceptable_title: "可接受的使用",
+                acceptable_list: "<li>請勿濫用本網站、超負荷運行服務或干擾其他用戶。</li><li>數據僅用於個人或團隊規劃；禁止自動抓取。</li><li>請勿將輸出結果歪曲為官方遊戲保證。</li><li>尊重知識產權以及適用於數據的任何遊戲條款。</li>",
+                disclaimer_title: "免責聲明",
+                disclaimer_p1: "此計算器按「原樣」提供。概率和表格盡力反映比賽數據，但結果無法保證。對於因使用此工具而造成的任何損失，我們概不負責。",
+                disclaimer_p2: "使用本網站即表示您接受信息不準確或過時的風險，並同意獨立核實重要決定。",
+                changes_title: "變更及可用性",
+                changes_p1: "為了確保網站的準確性和性能，我們可能會更新或暫停網站運行。條款變更時，我們會更新此頁面並修改版本說明。",
+                changes_p2: "如果使用行為威脅到系統穩定性或違反這些條款，則可能會限制訪問速率或暫停訪問。",
+                ownership_title: "所有權",
+                ownership_p1: "Forge Calculator 的代碼、素材和品牌均歸其各自所有者所有。使用本網站並不意味著您擁有代碼庫或視覺素材的任何所有權。",
+                law_title: "適用法律",
+                law_p1: "這些條款受當地適用法律管轄。與本網站相關的任何爭議應首先通過善意溝通解決。",
+                contact_title: "關於這些術語有任何疑問嗎？",
+                contact_p1: "如果您對這些使用條款有任何疑問，需要澄清任何政策，或想舉報潛在的違規行為，請通過聯繫頁面或發送電子郵件至 n20186005@gmail.com 聯繫我們。我們隨時為您提供幫助，並將盡快回复您的諮詢。",
+                feedback_title: "歡迎提出反饋意見",
+                feedback_p1: "您的反饋有助於我們改進這些條款，使其對所有用戶更加清晰易懂。如果您有任何關於如何使我們的條款更便於用戶理解或更全面完善的建議，歡迎與我們聯繫。",
+                footer_disclaimer: "The Forge Calculator 是粉絲製作的工具。與 Roblox 無關。",
+                footer_privacy: "隱私政策", footer_terms: "使用條款", footer_contact: "聯繫我們", footer_faq: "常見問題"
+            }
+        };
+
+        const LS_LANG_KEY = 'forge_lang_pref';
+        let currentLang = 'en';
+        const currentLangSpan = document.getElementById('current-lang');
+
+        // Init Lang from Storage
+        function initLanguage() {
+            const saved = localStorage.getItem(LS_LANG_KEY);
+            if (saved === 'zh' || saved === 'en') {
+                currentLang = saved;
+            } else {
+                currentLang = 'en';
+            }
+            currentLangSpan.innerText = currentLang.toUpperCase();
+            applyLanguage();
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'zh' : 'en';
+            localStorage.setItem(LS_LANG_KEY, currentLang);
+            currentLangSpan.innerText = currentLang.toUpperCase();
+            applyLanguage();
+        }
+
+        function applyLanguage() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (I18N[currentLang][key]) {
+                    el.innerText = I18N[currentLang][key];
+                }
+            });
+            document.querySelectorAll('[data-i18n-html]').forEach(el => {
+                const key = el.getAttribute('data-i18n-html');
+                if (I18N[currentLang][key]) {
+                    el.innerHTML = I18N[currentLang][key];
+                }
+            });
+        }
+
+        // Initialize language
+        initLanguage();
+    </script>
+</body>
+</html>

@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="The Forge Mining Calculator - Calculate ore drop probabilities based on pickaxe power, luck, and rock types.">
+    <title>Mining Calculator | The Forge</title>
+    <!-- SYSTEM DEFAULT ICON (Favicon) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚒️</text></svg>">
+    
+    <!-- Canonical Tag for SEO -->
+    <link rel="canonical" href="https://forgecalc.org/forgecalculator.html" />
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        gray: {
+                            750: '#2d3748',
+                            850: '#1a202c',
+                            950: '#0b0f19', // Darker background matching index.html
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <!-- Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b0f19;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(234, 88, 12, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.08) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: #e2e8f0;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0b0f19; }
+        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+
+        .glass-nav {
+            background: rgba(11, 15, 25, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useMemo, useEffect } = React;
+
+        // --- DATA ---
+        const LANGUAGES = {
+            en: {
+                title: "The Forge Calculator",
+                subtitle: "Mining & Probability Tool",
+                nav: [
+                    { label: "Calculator", href: "index.html" }, 
+                    { label: "Mining", href: "forgecalculator.html", active: true },
+                    { label: "Optimizer", href: "the-forge-inventory-optimizer.html" },
+                    { label: "Wiki", href: "the-forge-mini-wiki.html" },
+                    { label: "Guide", href: "the-forge-calculator-crafting-guide.html" }
+                ],
+                pickaxeLabel: "Select Pickaxe",
+                power: "Power",
+                luck: "Luck",
+                minable: "Mineable",
+                locked: "Locked",
+                reqPower: "Req Power",
+                buffsLabel: "Active Bonuses",
+                rockLabel: "Select Rock",
+                table: {
+                    ore: "Ore",
+                    base: "Base Prob",
+                    final: "Final Prob (1 Drop)",
+                    min: "Chance (Min Spawns)",
+                    max: "Chance (Max Spawns)",
+                },
+                faqItems: [
+                    { q: "How does Rock Luck work?", a: "Rock luck increases the base drop chance. For example: In a 50x rock, a 1/2000 ore becomes 1/40 before pickaxe luck." },
+                    { q: "How does Pickaxe Luck apply?", a: "Pickaxe luck is applied as a multiplier after rock luck: (1 + Luck% / 100). Higher luck increases odds for all ores." },
+                    { q: "What does 'Mineable' mean?", a: "It means your pickaxe power meets the rock's requirement. If not mineable, you cannot see the ore list in-game." },
+                    { q: "Is there a limit?", a: "Yes, chances are capped at 100%." }
+                ],
+                footer: {
+                    privacy: "Privacy Policy",
+                    terms: "Terms",
+                    contact: "Contact"
+                },
+                extraLuck: "Extra Luck (e.g. Rune)",
+                totalLuck: "Total Luck:"
+            },
+            zh: { // Changed key to 'zh' to match other files
+                title: "鍛造計算器",
+                subtitle: "採礦概率計算工具",
+                nav: [
+                    { label: "計算器", href: "index.html" },
+                    { label: "採礦", href: "forgecalculator.html", active: true },
+                    { label: "庫存優化", href: "the-forge-inventory-optimizer.html" },
+                    { label: "維基百科", href: "the-forge-mini-wiki.html" },
+                    { label: "攻略指南", href: "the-forge-calculator-crafting-guide.html" }
+                ],
+                pickaxeLabel: "選擇鎬子",
+                power: "力量",
+                luck: "幸運",
+                minable: "可開採",
+                locked: "未解鎖",
+                reqPower: "需求力量",
+                buffsLabel: "活性加成",
+                rockLabel: "選擇岩石",
+                table: {
+                    ore: "礦石",
+                    base: "基礎概率",
+                    final: "最終概率 (單次)",
+                    min: "機率 (最小生成)",
+                    max: "機率 (最大生成)",
+                },
+                faqItems: [
+                    { q: "岩石幸運倍率是如何運作的？", a: "岩石幸運值會提升基礎掉落機率。例如：在50倍岩石中，原本掉落1/2000的礦石，在鎬幸運值生效前掉落機率會提升到1/40。" },
+                    { q: "鎬子的運氣如何影響最終的勝算？", a: "鎬的幸運值會在岩石幸運值之後以乘數形式應用：（1 + 幸運值% / 100）。更高的幸運值會提高該岩石中所有礦石的出現機率。" },
+                    { q: "“可開採”是什麼意思？", a: "可開採意味著你的鎬子力量滿足岩石的開採要求。如果岩石不可開採，你就無法在遊戲中查看該岩石的礦石列表。" },
+                    { q: "機會有極限嗎？", a: "是的——如果倍率大幅提升礦石的掉落機率，那麼該次掉落機率實際上會接近100%。計算器會將結果限制在100%。" }
+                ],
+                footer: {
+                    privacy: "隱私政策",
+                    terms: "使用條款",
+                    contact: "聯繫我們"
+                },
+                extraLuck: "額外幸運 (例如: 符文)",
+                totalLuck: "總幸運加成:"
+            }
+        };
+
+        const PICKAXES = [
+            { name: "W1 • Stone Pickaxe", nameTC: "W1 • 石鎬", power: 4, luck: 0 },
+            { name: "W1 • Bronze Pickaxe", nameTC: "W1 • 青銅鎬", power: 7, luck: 0 },
+            { name: "W1 • Iron Pickaxe", nameTC: "W1 • 鐵鎬", power: 10, luck: 5 },
+            { name: "W1 • Gold Pickaxe", nameTC: "W1 • 金鎬", power: 16, luck: 15 },
+            { name: "W1 • Platinum Pickaxe", nameTC: "W1 • 白金鎬", power: 24, luck: 25 },
+            { name: "W1 • Stone Awakened Pickaxe", nameTC: "W1 • 石醒鎬", power: 33, luck: 10 },
+            { name: "W1 • Arcane Pickaxe", nameTC: "W1 • 奧術鎬", power: 115, luck: 50 },
+            { name: "W2 • Cobalt Pickaxe", nameTC: "W2 • 鈷藍鎬", power: 40, luck: 35 },
+            { name: "W2 • Titanium Pickaxe", nameTC: "W2 • 鈦鎬", power: 55, luck: 38 },
+            { name: "W2 • Uranium Pickaxe", nameTC: "W2 • 鈾鎬", power: 67, luck: 41 },
+            { name: "W2 • Mithril Pickaxe", nameTC: "W2 • 秘銀鎬", power: 80, luck: 43.5 },
+            { name: "W2 • Lightstone Pickaxe", nameTC: "W2 • 輕石鎬", power: 100, luck: 45 },
+            { name: "W2 • Magma Pickaxe", nameTC: "W2 • 岩漿鎬", power: 135, luck: 46 },
+            { name: "W2 • Demon Pickaxe", nameTC: "W2 • 惡魔鎬", power: 175, luck: 47.5 },
+            { name: "W3 • Tungsten Pickaxe", nameTC: "W3 • 鎢鎬", power: 150, luck: 48 },
+            { name: "W3 • Water Pickaxe", nameTC: "W3 • 水之鎬", power: 200, luck: 52 },
+            { name: "W3 • Candy Pickaxe", nameTC: "W3 • 糖果鎬", power: 280, luck: 65 },
+            { name: "W3 • Snow Pickaxe", nameTC: "W3 • 雪鎬", power: 320, luck: 58 },
+            { name: "W3 • Frost Pickaxe", nameTC: "W3 • 冰霜鎬", power: 420, luck: 62 },
+            { name: "W3 • Void Pickaxe", nameTC: "W3 • 虛空鎬", power: 550, luck: 68 },
+            { name: "W3 • Christmas Pickaxe", nameTC: "W3 • 聖誕鎬", power: 550, luck: 72 },
+            { name: "W3 • Prismatic Pickaxe", nameTC: "W3 • 棱彩鎬", power: 650, luck: 72 },
+            { name: "W3 • Celestial Pickaxe", nameTC: "W3 • 天界鎬", power: 725, luck: 85 },
+            { name: "W3 • Draconic Pickaxe", nameTC: "W3 • 龍頭鎬", power: 750, luck: 78 },
+            { name: "W3 • Angelic Pickaxe", nameTC: "W3 • 天使鎬", power: 888, luck: 85 },
+        ];
+
+        const BUFFS = [
+            { id: 'rune', name: 'Rune Luck', nameTC: '符文幸運', value: 0 },
+            { id: 'potion', name: 'Potion', nameTC: '藥水', value: 50 },
+            { id: 'totem', name: 'Totem', nameTC: '圖騰', value: 10 },
+            { id: 'event_xmas', name: 'Christmas Event', nameTC: '聖誕節', value: 20 },
+            { id: 'fungal', name: 'Fungal', nameTC: '真菌', value: 15 },
+            { id: 'weekend', name: 'Weekend', nameTC: '週末', value: 25 },
+        ];
+
+        const ROCKS = [
+            {
+                id: 'stone', name: 'Stone', nameTC: '石頭', powerReq: 1, minSpawns: 1, maxSpawns: 1,
+                ores: [{ name: 'Stone', nameTC: '石頭', chance: 1 }]
+            },
+            {
+                id: 'sandstone', name: 'Sandstone', nameTC: '砂岩', powerReq: 2, minSpawns: 1, maxSpawns: 2,
+                ores: [
+                    { name: 'Sandstone', nameTC: '砂岩', chance: 1/2 },
+                    { name: 'Copper', nameTC: '銅', chance: 1/3 },
+                    { name: 'Iron', nameTC: '鐵', chance: 1/5 },
+                    { name: 'Poop', nameTC: '噗噗', chance: 1/131 },
+                ]
+            },
+            {
+                id: 'copper', name: 'Copper Rock', nameTC: '銅岩', powerReq: 7, minSpawns: 1, maxSpawns: 2,
+                ores: [
+                    { name: 'Sandstone', nameTC: '砂岩', chance: 1/2 },
+                    { name: 'Copper', nameTC: '銅', chance: 1/3 },
+                    { name: 'Iron', nameTC: '鐵', chance: 1/5 },
+                    { name: 'Tin', nameTC: '錫', chance: 1/7 },
+                    { name: 'Silver', nameTC: '銀', chance: 1/12 },
+                    { name: 'Mushroom', nameTC: '蘑菇石', chance: 1/22 },
+                    { name: 'Bananite', nameTC: '香蕉石', chance: 1/30 },
+                    { name: 'Cardboard', nameTC: '紙板', chance: 1/31 },
+                    { name: 'Poop', nameTC: '噗噗', chance: 1/131 },
+                ]
+            },
+            {
+                id: 'iron', name: 'Iron Rock', nameTC: '鐵岩', powerReq: 13, minSpawns: 1, maxSpawns: 2,
+                ores: [
+                    { name: 'Copper', nameTC: '銅', chance: 1/3 },
+                    { name: 'Iron', nameTC: '鐵', chance: 1/5 },
+                    { name: 'Tin', nameTC: '錫', chance: 1/7 },
+                    { name: 'Silver', nameTC: '銀', chance: 1/12 },
+                    { name: 'Gold', nameTC: '金子', chance: 1/16 },
+                    { name: 'Mushroom', nameTC: '蘑菇石', chance: 1/22 },
+                    { name: 'Platinum', nameTC: '鉑', chance: 1/28 },
+                    { name: 'Bananite', nameTC: '香蕉石', chance: 1/30 },
+                    { name: 'Cardboard', nameTC: '紙板', chance: 1/31 },
+                    { name: 'Aether', nameTC: '艾特', chance: 1/44 },
+                    { name: 'Poop', nameTC: '噗噗', chance: 1/131 },
+                ]
+            },
+            {
+                id: 'titanium', name: 'Titanium Rock', nameTC: '鈦岩', powerReq: 16, minSpawns: 1, maxSpawns: 1,
+                ores: [
+                    { name: 'Silver', nameTC: '銀', chance: 1/12 },
+                    { name: 'Gold', nameTC: '金子', chance: 1/16 },
+                    { name: 'Platinum', nameTC: '鉑', chance: 1/28 },
+                    { name: 'Cobalt', nameTC: '鈷', chance: 1/37 },
+                    { name: 'Titanium', nameTC: '鈦', chance: 1/50 },
+                    { name: 'Lapis', nameTC: '青金石', chance: 1/73 },
+                    { name: 'Eye Damage', nameTC: '眼部損傷', chance: 1/1333 },
+                ]
+            },
+            {
+                id: 'uranium', name: 'Uranium Rock', nameTC: '鈾岩', powerReq: 39, minSpawns: 1, maxSpawns: 2,
+                ores: [
+                    { name: 'Cobalt', nameTC: '鈷', chance: 1/37 },
+                    { name: 'Titanium', nameTC: '鈦', chance: 1/50 },
+                    { name: 'Lapis', nameTC: '青金石', chance: 1/73 },
+                    { name: 'Quartz', nameTC: '石英', chance: 1/90 },
+                    { name: 'Amethyst', nameTC: '紫晶', chance: 1/115 },
+                    { name: 'Topaz', nameTC: '黃玉', chance: 1/143 },
+                    { name: 'Diamond', nameTC: '鑽石', chance: 1/192 },
+                    { name: 'Sapphire', nameTC: '藍寶石', chance: 1/247 },
+                    { name: 'Cuprite', nameTC: '赤銅礦', chance: 1/303 },
+                    { name: 'Emerald', nameTC: '翠', chance: 1/363 },
+                    { name: 'Eye Damage', nameTC: '眼部損傷', chance: 1/1333 },
+                ]
+            },
+            {
+                id: 'tungsten', name: 'Tungsten Rock', nameTC: '鎢岩', powerReq: 78, minSpawns: 1, maxSpawns: 2,
+                ores: [
+                    { name: 'Quartz', nameTC: '石英', chance: 1/90 },
+                    { name: 'Amethyst', nameTC: '紫晶', chance: 1/115 },
+                    { name: 'Topaz', nameTC: '黃玉', chance: 1/143 },
+                    { name: 'Diamond', nameTC: '鑽石', chance: 1/192 },
+                    { name: 'Sapphire', nameTC: '藍寶石', chance: 1/247 },
+                    { name: 'Cuprite', nameTC: '赤銅礦', chance: 1/303 },
+                    { name: 'Emerald', nameTC: '翠', chance: 1/363 },
+                    { name: 'Ruby', nameTC: '紅寶石', chance: 1/487 },
+                    { name: 'Rivalrite', nameTC: '競爭對手', chance: 1/569 },
+                    { name: 'Uranium', nameTC: '鈾', chance: 1/777 },
+                    { name: 'Mithril', nameTC: '秘銀', chance: 1/813 },
+                    { name: 'Eye Damage', nameTC: '眼部損傷', chance: 1/1333 },
+                    { name: 'Light', nameTC: '萊特', chance: 1/3333 },
+                ]
+            },
+            {
+                id: 'volcanic', name: 'Volcanic Rock', nameTC: '火山岩', powerReq: 100, minSpawns: 2, maxSpawns: 3,
+                ores: [
+                    { name: 'Volcanium', nameTC: '火山岩', chance: 1/55 },
+                    { name: 'Topaz', nameTC: '黃玉', chance: 1/143 },
+                    { name: 'Cuprite', nameTC: '赤銅礦', chance: 1/303 },
+                    { name: 'Obsidian', nameTC: '黑曜石', chance: 1/333 },
+                    { name: 'Rivalrite', nameTC: '競爭對手', chance: 1/569 },
+                    { name: 'Eye Damage', nameTC: '眼部損傷', chance: 1/1333 },
+                    { name: 'Firestone', nameTC: '火石', chance: 1/2187 },
+                    { name: 'Magma', nameTC: '岩漿', chance: 1/3003 },
+                    { name: 'Demonite', nameTC: '魔石', chance: 1/3666 },
+                    { name: 'Dark Light', nameTC: '黑暗之光', chance: 1/6655 },
+                ]
+            },
+            {
+                id: 'prismatic', name: 'Prismatic Rock', nameTC: '棱彩岩', powerReq: 78, minSpawns: 5, maxSpawns: 5,
+                ores: [
+                    { name: 'Blue Crystal', nameTC: '藍水晶', chance: 1/255 },
+                    { name: 'Crimson Crystal', nameTC: '緋紅水晶', chance: 1/255 },
+                    { name: 'Green Crystal', nameTC: '綠晶', chance: 1/255 },
+                    { name: 'Magenta Crystal', nameTC: '品紅色水晶', chance: 1/255 },
+                    { name: 'Orange Crystal', nameTC: '橙晶', chance: 1/255 },
+                    { name: 'Rainbow Crystal', nameTC: '彩虹水晶', chance: 1/5000 },
+                    { name: 'Arcane Crystal', nameTC: '奧術水晶', chance: 1/100000 },
+                ]
+            },
+            {
+                id: 'water', name: 'Water Rock', nameTC: '水岩', powerReq: 135, minSpawns: 1, maxSpawns: 2,
+                ores: [
+                    { name: 'Tungsten', nameTC: '鎢', chance: 1/180 },
+                    { name: 'Sulfur', nameTC: '硫', chance: 1/215 },
+                    { name: 'Scheelite', nameTC: '白鎢礦', chance: 1/247 },
+                    { name: 'Pumice', nameTC: '浮石', chance: 1/265 },
+                    { name: 'Graphite', nameTC: '石墨', chance: 1/315 },
+                    { name: 'Aether', nameTC: '以太', chance: 1/390 },
+                    { name: 'Larimar', nameTC: '拉利瑪', chance: 1/575 },
+                    { name: 'Neurite', nameTC: '神經質', chance: 1/690 },
+                    { name: 'Uranium', nameTC: '鈾', chance: 1/777 },
+                    { name: 'Mithril', nameTC: '秘銀', chance: 1/813 },
+                    { name: 'Light', nameTC: '萊特', chance: 1/3333 },
+                    { name: 'Snow', nameTC: '雪地', chance: 1/4325 },
+                    { name: 'Ice Crystal', nameTC: '冰晶', chance: 1/9898 },
+                ]
+            },
+            {
+                id: 'candy', name: 'Candy Rock', nameTC: '糖果岩', powerReq: 180, minSpawns: 2, maxSpawns: 3,
+                ores: [
+                    { name: 'Tungsten', nameTC: '鎢', chance: 1/180 },
+                    { name: 'Sulfur', nameTC: '硫', chance: 1/215 },
+                    { name: 'Scheelite', nameTC: '白鎢礦', chance: 1/247 },
+                    { name: 'Pumice', nameTC: '浮石', chance: 1/265 },
+                    { name: 'Graphite', nameTC: '石墨', chance: 1/315 },
+                    { name: 'Aether', nameTC: '以太', chance: 1/390 },
+                    { name: 'Larimar', nameTC: '拉利瑪', chance: 1/575 },
+                    { name: 'Neurite', nameTC: '神經質', chance: 1/690 },
+                    { name: 'Frostone', nameTC: '霜化石', chance: 1/820 },
+                    { name: 'Tide Carved', nameTC: '潮汐雕刻', chance: 1/980 },
+                    { name: 'Viridill', nameTC: '維爾基爾', chance: 1/1450 },
+                    { name: 'Sanctite', nameTC: '聖克蒂斯', chance: 1/1830 },
+                    { name: 'Snow', nameTC: '雪地', chance: 1/4325 },
+                    { name: 'Ice Crystal', nameTC: '冰晶', chance: 1/9898 },
+                ]
+            },
+            {
+                id: 'snow', name: 'Snow Rock', nameTC: '雪岩', powerReq: 320, minSpawns: 1, maxSpawns: 2,
+                ores: [
+                    { name: 'Scheelite', nameTC: '白鎢礦', chance: 1/247 },
+                    { name: 'Aether', nameTC: '以太', chance: 1/390 },
+                    { name: 'Larimar', nameTC: '拉利瑪', chance: 1/575 },
+                    { name: 'Neurite', nameTC: '神經質', chance: 1/690 },
+                    { name: 'Frostone', nameTC: '霜化石', chance: 1/820 },
+                    { name: 'Tide Carved', nameTC: '潮汐雕刻', chance: 1/980 },
+                    { name: 'Viridill', nameTC: '維爾基爾', chance: 1/1450 },
+                    { name: 'Sanctite', nameTC: '聖克蒂斯', chance: 1/1830 },
+                    { name: 'Mist Vein', nameTC: '迷霧脈', chance: 1/2626 },
+                    { name: 'Ragaryte', nameTC: '拉加里特', chance: 1/3131 },
+                    { name: 'Void Fractal', nameTC: '虛空分形', chance: 1/3456 },
+                    { name: 'Meltfrost', nameTC: '熔霜', chance: 1/4004 },
+                    { name: 'Snow', nameTC: '雪地', chance: 1/4325 },
+                    { name: 'Crimsonite', nameTC: '深紅石', chance: 1/4540 },
+                    { name: 'Ice Crystal', nameTC: '冰晶', chance: 1/9898 },
+                    { name: 'Suryafal', nameTC: '蘇里亞法爾', chance: 1/50050 },
+                ]
+            },
+            {
+                id: 'frost', name: 'Frost Rock', nameTC: '冰霜岩', powerReq: 420, minSpawns: 1, maxSpawns: 2,
+                ores: [
+                    { name: 'Frostone', nameTC: '霜化石', chance: 1/820 },
+                    { name: 'Tide Carved', nameTC: '潮汐雕刻', chance: 1/980 },
+                    { name: 'Viridill', nameTC: '維爾基爾', chance: 1/1450 },
+                    { name: 'Sanctite', nameTC: '聖克蒂斯', chance: 1/1830 },
+                    { name: 'Mist Vein', nameTC: '迷霧脈', chance: 1/2626 },
+                    { name: 'Ragaryte', nameTC: '拉加里特', chance: 1/3131 },
+                    { name: 'Void Fractal', nameTC: '虛空分形', chance: 1/3456 },
+                    { name: 'Meltfrost', nameTC: '熔霜', chance: 1/4004 },
+                    { name: 'Snow', nameTC: '雪地', chance: 1/4325 },
+                    { name: 'Crimsonite', nameTC: '深紅石', chance: 1/4540 },
+                    { name: 'Malachite', nameTC: '孔雀石', chance: 1/5123 },
+                    { name: 'Aquajade', nameTC: '阿庫賈德', chance: 1/5555 },
+                    { name: 'Crypton', nameTC: '密碼', chance: 1/6060 },
+                    { name: 'Gallesto', nameTC: '加萊斯托', chance: 1/6666 },
+                    { name: 'Void Star', nameTC: '虛空星', chance: 1/8179 },
+                    { name: 'Ice Crystal', nameTC: '冰晶', chance: 1/9898 },
+                    { name: 'Suryafal', nameTC: '蘇里亞法爾', chance: 1/50050 },
+                ]
+            },
+            {
+                id: 'void', name: 'Void Rock', nameTC: '虛空岩', powerReq: 550, minSpawns: 2, maxSpawns: 3,
+                ores: [
+                    { name: 'Viridill', nameTC: '維爾基爾', chance: 1/1450 },
+                    { name: 'Sanctite', nameTC: '聖克蒂斯', chance: 1/1830 },
+                    { name: 'Mist Vein', nameTC: '迷霧脈', chance: 1/2626 },
+                    { name: 'Ragaryte', nameTC: '拉加里特', chance: 1/3131 },
+                    { name: 'Void Fractal', nameTC: '虛空分形', chance: 1/3456 },
+                    { name: 'Meltfrost', nameTC: '熔霜', chance: 1/4004 },
+                    { name: 'Snow', nameTC: '雪地', chance: 1/4325 },
+                    { name: 'Crimsonite', nameTC: '深紅石', chance: 1/4540 },
+                    { name: 'Malachite', nameTC: '孔雀石', chance: 1/5123 },
+                    { name: 'Aquajade', nameTC: '阿庫賈德', chance: 1/5555 },
+                    { name: 'Crypton', nameTC: '密碼', chance: 1/6060 },
+                    { name: 'Gallesto', nameTC: '加萊斯托', chance: 1/6666 },
+                    { name: 'Void Star', nameTC: '虛空星', chance: 1/8179 },
+                    { name: 'Ice Crystal', nameTC: '冰晶', chance: 1/9898 },
+                    { name: 'Aethereum', nameTC: '以太坊', chance: 1/11111 },
+                    { name: 'Suryafal', nameTC: '蘇里亞法爾', chance: 1/50050 },
+                    { name: 'Colossal', nameTC: '巨型', chance: 1/333333 },
+                ]
+            },
+            {
+                id: 'celestial', name: 'Celestial Rock', nameTC: '天界岩', powerReq: 650, minSpawns: 1, maxSpawns: 3,
+                ores: [
+                    { name: 'Frostone', nameTC: '霜化石', chance: 1/820 },
+                    { name: 'Tide Carved', nameTC: '潮汐雕刻', chance: 1/980 },
+                    { name: 'Viridill', nameTC: '維爾基爾', chance: 1/1450 },
+                    { name: 'Mist Vein', nameTC: '迷霧脈', chance: 1/2626 },
+                    { name: 'Ragaryte', nameTC: '拉加里特', chance: 1/3131 },
+                    { name: 'Void Fractal', nameTC: '虛空分形', chance: 1/3456 },
+                    { name: 'Meltfrost', nameTC: '熔霜', chance: 1/4004 },
+                    { name: 'Snow', nameTC: '雪地', chance: 1/4325 },
+                    { name: 'Crimsonite', nameTC: '深紅石', chance: 1/4540 },
+                    { name: 'Malachite', nameTC: '孔雀石', chance: 1/5123 },
+                    { name: 'Crypton', nameTC: '密碼', chance: 1/6060 },
+                    { name: 'Gallesto', nameTC: '加萊斯托', chance: 1/6666 },
+                    { name: 'Frogman', nameTC: '蛙人', chance: 1/6800 },
+                    { name: 'Moonstone', nameTC: '月光石', chance: 1/7970 },
+                    { name: 'Void Star', nameTC: '虛空星', chance: 1/8179 },
+                    { name: 'Ice Crystal', nameTC: '冰晶', chance: 1/9898 },
+                    { name: 'Gulabite', nameTC: '古拉比特', chance: 1/9999 },
+                    { name: 'Aethereum', nameTC: '以太坊', chance: 1/11111 },
+                    { name: 'Coin', nameTC: '硬幣', chance: 1/15151 },
+                    { name: 'Duranite', nameTC: '杜蘭石', chance: 1/21430 },
+                    { name: 'Evil Eye', nameTC: '邪眼', chance: 1/33333 },
+                    { name: 'Suryafal', nameTC: '蘇里亞法爾', chance: 1/50050 },
+                    { name: 'Colossal', nameTC: '巨型', chance: 1/333333 },
+                ]
+            },
+            {
+                id: 'draconic', name: 'Draconic Rock', nameTC: '龍岩', powerReq: 420, minSpawns: 1, maxSpawns: 1,
+                ores: [
+                    { name: 'Mosasaurus', nameTC: '滄龍', chance: 1 },
+                ]
+            }
+        ];
+
+        // --- UTILS ---
+        const formatChance = (prob, showPercentage = true) => {
+            if (prob >= 1) return "1 / 1 (100.00%)";
+            const oneInX = Math.round(1 / prob);
+            const percentage = (prob * 100).toFixed(2);
+            return `1 / ${oneInX.toLocaleString()} (${percentage}%)`;
+        };
+
+        const calculateProbability = (baseChance, totalLuckPercent, spawns) => {
+            let p = baseChance * (1 + totalLuckPercent / 100);
+            if (p > 1) p = 1;
+            const probabilityAtLeastOne = 1 - Math.pow(1 - p, spawns);
+            return probabilityAtLeastOne;
+        };
+
+        // --- APP COMPONENT ---
+        function App() {
+            // Load language from localStorage or default to 'en'
+            const [lang, setLang] = useState(() => {
+                return localStorage.getItem('forge_lang_pref') || 'en';
+            });
+
+            // Persist language change
+            useEffect(() => {
+                localStorage.setItem('forge_lang_pref', lang);
+            }, [lang]);
+
+            const [selectedPickaxe, setSelectedPickaxe] = useState(PICKAXES[0]);
+            const [selectedRock, setSelectedRock] = useState(ROCKS[0]);
+            const [activeBuffs, setActiveBuffs] = useState({});
+            const [customLuck, setCustomLuck] = useState(0); 
+
+            const toggleBuff = (id, value) => {
+                setActiveBuffs(prev => {
+                    const next = { ...prev };
+                    if (next[id]) delete next[id];
+                    else next[id] = value;
+                    return next;
+                });
+            };
+
+            const t = LANGUAGES[lang];
+
+            const totalLuck = useMemo(() => {
+                let luck = selectedPickaxe.luck;
+                Object.values(activeBuffs).forEach(val => luck += val);
+                luck += parseFloat(customLuck) || 0;
+                return luck;
+            }, [selectedPickaxe, activeBuffs, customLuck]);
+
+            const isMineable = selectedPickaxe.power >= selectedRock.powerReq;
+
+            return (
+                <div className="min-h-screen font-sans selection:bg-orange-500 selection:text-white">
+                    {/* HEADER */}
+                    <header className="sticky top-0 z-50 glass-nav shadow-lg">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+                            <a href="index.html" className="flex items-center gap-3 group">
+                                <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-600/20 transform group-hover:rotate-12 transition-transform duration-300">
+                                    <i className="fa-solid fa-hammer text-white text-lg"></i>
+                                </div>
+                                <div className="flex flex-col leading-tight">
+                                    <span className="font-bold text-lg tracking-tight hidden sm:block text-white group-hover:text-orange-100 transition">The Forge</span>
+                                    <span className="font-bold text-sm tracking-tight text-orange-500 hidden sm:block group-hover:text-orange-400 transition">{lang === 'zh' ? '採礦計算器' : 'Mining Calc'}</span>
+                                </div>
+                                <span className="font-bold text-xl tracking-tight sm:hidden text-white">TFC</span>
+                            </a>
+                            
+                            <nav className="hidden md:flex items-center space-x-1 bg-gray-800/50 p-1 rounded-lg border border-gray-700/50">
+                                {t.nav.map((item, idx) => (
+                                    <a 
+                                        key={idx} 
+                                        href={item.href} 
+                                        className={`px-3 py-1.5 rounded-md text-sm font-medium transition ${item.active ? 'bg-orange-600 text-white shadow' : 'text-gray-400 hover:text-white hover:bg-gray-700/50'}`}
+                                    >
+                                        {item.label}
+                                    </a>
+                                ))}
+                            </nav>
+
+                            <button 
+                                onClick={() => setLang(l => l === 'en' ? 'zh' : 'en')}
+                                className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-gray-700 hover:border-orange-500 hover:text-orange-500 transition text-xs font-mono bg-gray-800/80 backdrop-blur group cursor-pointer text-gray-300"
+                            >
+                                <i className="fa-solid fa-globe group-hover:rotate-180 transition-transform duration-500"></i>
+                                {lang === 'en' ? 'EN' : '繁體'}
+                            </button>
+                        </div>
+                    </header>
+
+                    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        
+                        {/* LEFT PANEL: CONTROLS */}
+                        <div className="lg:col-span-4 space-y-6">
+                            {/* PICKAXE SELECTOR */}
+                            <div className="glass-panel rounded-xl overflow-hidden shadow-xl">
+                                <div className="bg-gray-800/50 p-4 border-b border-gray-700 flex items-center justify-between">
+                                    <h2 className="font-bold flex items-center gap-2 text-orange-400">
+                                        <i className="fa-solid fa-screwdriver-wrench"></i>
+                                        {t.pickaxeLabel}
+                                    </h2>
+                                </div>
+                                <div className="p-4 space-y-4">
+                                    <div className="relative group">
+                                        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+                                            <i className="fa-solid fa-filter"></i>
+                                        </div>
+                                        <select 
+                                            className="w-full bg-gray-900 border border-gray-700 rounded-lg pl-10 p-3 text-sm focus:ring-2 focus:ring-orange-500 outline-none text-gray-200 appearance-none cursor-pointer hover:bg-gray-800 transition"
+                                            value={PICKAXES.indexOf(selectedPickaxe)}
+                                            onChange={(e) => setSelectedPickaxe(PICKAXES[e.target.value])}
+                                        >
+                                            {PICKAXES.map((p, idx) => (
+                                                <option key={idx} value={idx}>
+                                                    {lang === 'zh' ? p.nameTC : p.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="bg-gray-900/50 p-3 rounded-lg border border-gray-700 flex flex-col items-center">
+                                            <span className="text-xs text-gray-500 uppercase tracking-wider mb-1">{t.power}</span>
+                                            <span className="text-2xl font-black text-cyan-400 drop-shadow-sm">{selectedPickaxe.power}</span>
+                                        </div>
+                                        <div className="bg-gray-900/50 p-3 rounded-lg border border-gray-700 flex flex-col items-center">
+                                            <span className="text-xs text-gray-500 uppercase tracking-wider mb-1">{t.luck}</span>
+                                            <span className="text-2xl font-black text-orange-400 drop-shadow-sm">{selectedPickaxe.luck}%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* BUFFS SELECTOR */}
+                            <div className="glass-panel rounded-xl overflow-hidden shadow-xl">
+                                <div className="bg-gray-800/50 p-4 border-b border-gray-700 flex items-center justify-between">
+                                    <h2 className="font-bold flex items-center gap-2 text-emerald-400">
+                                        <i className="fa-solid fa-shield-halved"></i>
+                                        {t.buffsLabel}
+                                    </h2>
+                                </div>
+                                <div className="p-4 space-y-3">
+                                    {BUFFS.map(buff => (
+                                        <label key={buff.id} className="flex items-center justify-between p-3 rounded-lg bg-gray-900/40 border border-gray-700 hover:border-gray-500 hover:bg-gray-800/60 cursor-pointer transition-all group">
+                                            <div className="flex items-center gap-3">
+                                                <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${activeBuffs[buff.id] ? 'bg-emerald-500 border-emerald-500' : 'border-gray-600 group-hover:border-gray-400'}`}>
+                                                    {activeBuffs[buff.id] && <i className="fa-solid fa-check text-white text-xs"></i>}
+                                                </div>
+                                                <span className="text-sm font-medium text-gray-300 group-hover:text-white transition">{lang === 'zh' ? buff.nameTC : buff.name}</span>
+                                            </div>
+                                            <span className="text-xs font-mono text-emerald-400 font-bold">+{buff.value}%</span>
+                                            <input 
+                                                type="checkbox" 
+                                                className="hidden" 
+                                                checked={!!activeBuffs[buff.id]}
+                                                onChange={() => toggleBuff(buff.id, buff.value)}
+                                            />
+                                        </label>
+                                    ))}
+                                    {/* Manual Luck Entry (Rune or other) */}
+                                    <div className="p-3 rounded-lg bg-gray-900/40 border border-gray-700">
+                                        <div className="flex justify-between items-center mb-2">
+                                            <span className="text-sm font-medium text-gray-400">
+                                                {t.extraLuck}
+                                            </span>
+                                        </div>
+                                        <input 
+                                            type="number"
+                                            min="0"
+                                            className="w-full bg-gray-950 border border-gray-600 rounded px-3 py-2 text-sm text-right focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none text-white transition placeholder-gray-700"
+                                            placeholder="0"
+                                            value={customLuck}
+                                            onChange={(e) => setCustomLuck(Number(e.target.value))}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="bg-gray-900/80 p-4 border-t border-gray-700 flex justify-between items-center backdrop-blur-sm">
+                                    <span className="text-sm text-gray-400 font-medium">{t.totalLuck}</span>
+                                    <span className="text-xl font-bold text-orange-400">{totalLuck}%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* RIGHT PANEL: CALCULATOR RESULTS */}
+                        <div className="lg:col-span-8 space-y-6">
+                        
+                            {/* ROCK SELECTOR */}
+                            <div className="space-y-3">
+                                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2 pl-1">
+                                    <i className="fa-solid fa-cubes"></i> {t.rockLabel}
+                                </h3>
+                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                                    {ROCKS.map(rock => {
+                                        const active = selectedRock.id === rock.id;
+                                        const mineable = selectedPickaxe.power >= rock.powerReq;
+                                        return (
+                                            <button
+                                                key={rock.id}
+                                                onClick={() => setSelectedRock(rock)}
+                                                className={`relative p-3 rounded-xl border text-left transition-all group overflow-hidden ${
+                                                    active 
+                                                        ? 'bg-orange-600/20 border-orange-500 ring-1 ring-orange-500/50 shadow-lg shadow-orange-900/20' 
+                                                        : 'bg-gray-800 border-gray-700 hover:border-gray-500 hover:bg-gray-750'
+                                                }`}
+                                            >
+                                                <div className="relative z-10">
+                                                    <div className="flex justify-between items-start mb-2">
+                                                        <i className={`fa-regular fa-gem text-lg ${active ? 'text-orange-400' : 'text-gray-500 group-hover:text-gray-400'}`}></i>
+                                                        {!mineable && <div className="bg-red-900/50 text-red-400 text-[10px] px-1.5 py-0.5 rounded border border-red-500/30 uppercase font-bold tracking-wide"><i className="fa-solid fa-lock mr-1"></i>{t.locked}</div>}
+                                                    </div>
+                                                    <div className={`font-bold text-sm mb-1 truncate ${active ? 'text-white' : 'text-gray-300 group-hover:text-white'}`}>
+                                                        {lang === 'zh' ? rock.nameTC : rock.name}
+                                                    </div>
+                                                    <div className="text-[10px] text-gray-500 font-mono group-hover:text-gray-400 transition">
+                                                        PWR: {rock.powerReq}
+                                                    </div>
+                                                </div>
+                                            </button>
+                                        )
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* MAIN STATUS CARD */}
+                            <div className={`glass-panel rounded-xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-l-4 ${isMineable ? 'border-l-emerald-500' : 'border-l-red-500'}`}>
+                                <div>
+                                    <h2 className="text-2xl font-bold text-white mb-2 flex items-center gap-3">
+                                        {lang === 'zh' ? selectedRock.nameTC : selectedRock.name}
+                                        {isMineable ? 
+                                            <span className="bg-emerald-900/30 text-emerald-400 text-xs px-2 py-1 rounded border border-emerald-500/30 uppercase font-bold"><i className="fa-solid fa-check"></i> {t.minable}</span> : 
+                                            <span className="bg-red-900/30 text-red-400 text-xs px-2 py-1 rounded border border-red-500/30 uppercase font-bold"><i className="fa-solid fa-xmark"></i> {t.locked}</span>
+                                        }
+                                    </h2>
+                                    <div className="text-sm text-gray-400 flex flex-wrap gap-2">
+                                        <span className="bg-gray-900 px-3 py-1 rounded-full border border-gray-700 flex items-center gap-2">
+                                            <i className="fa-solid fa-arrows-rotate text-gray-500"></i>
+                                            {lang === 'zh' ? '生成次數' : 'Spawns'}: <span className="text-white font-mono">{selectedRock.minSpawns}-{selectedRock.maxSpawns}</span>
+                                        </span>
+                                        <span className="bg-gray-900 px-3 py-1 rounded-full border border-gray-700 flex items-center gap-2">
+                                            <i className="fa-solid fa-bolt text-gray-500"></i>
+                                            {t.reqPower}: <span className="text-white font-mono">{selectedRock.powerReq}</span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* RESULTS TABLE */}
+                            <div className="glass-panel rounded-xl overflow-hidden shadow-2xl">
+                                {/* Info Banner */}
+                                <div className="bg-blue-900/10 border-b border-blue-500/20 p-3 flex gap-3 text-xs text-blue-300">
+                                    <i className="fa-solid fa-circle-info mt-0.5"></i>
+                                    <p>
+                                        {lang === 'zh' 
+                                         ? `當前鎬子力量為 ${selectedPickaxe.power}。岩石需要 ${selectedRock.powerReq}。幸運加成 ${totalLuck}%` 
+                                         : `Your Pickaxe Power is ${selectedPickaxe.power}. This rock requires ${selectedRock.powerReq}. Luck Multiplier applied: ${totalLuck}%`}
+                                    </p>
+                                </div>
+
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-sm text-left">
+                                        <thead className="bg-gray-900/80 text-gray-400 uppercase text-xs font-bold tracking-wider">
+                                            <tr>
+                                                <th className="p-4">{t.table.ore}</th>
+                                                <th className="p-4 hidden sm:table-cell">{t.table.base}</th>
+                                                <th className="p-4 text-orange-400">{t.table.final}</th>
+                                                <th className="p-4">{t.table.min} (x{selectedRock.minSpawns})</th>
+                                                {selectedRock.minSpawns !== selectedRock.maxSpawns && (
+                                                    <th className="p-4">{t.table.max} (x{selectedRock.maxSpawns})</th>
+                                                )}
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-700/50">
+                                            {!isMineable ? (
+                                                <tr>
+                                                    <td colSpan="5" className="p-12 text-center text-gray-500">
+                                                        <div className="flex flex-col items-center">
+                                                            <div className="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mb-4">
+                                                                <i className="fa-solid fa-lock text-2xl text-gray-600"></i>
+                                                            </div>
+                                                            <p className="font-medium">{lang === 'zh' ? '無法開採此岩石查看概率' : 'Cannot mine this rock to see probabilities'}</p>
+                                                            <p className="text-xs mt-1 text-gray-600">{lang === 'zh' ? `需要力量: ${selectedRock.powerReq}` : `Required Power: ${selectedRock.powerReq}`}</p>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ) : (
+                                                selectedRock.ores.map((ore, idx) => {
+                                                    const probSingle = calculateProbability(ore.chance, totalLuck, 1);
+                                                    const probMin = calculateProbability(ore.chance, totalLuck, selectedRock.minSpawns);
+                                                    const probMax = calculateProbability(ore.chance, totalLuck, selectedRock.maxSpawns);
+                                                    
+                                                    // Highlighting rare ores
+                                                    const isRare = ore.chance < 0.01;
+                                                    
+                                                    return (
+                                                        <tr key={idx} className="hover:bg-gray-800/40 transition-colors group">
+                                                            <td className={`p-4 font-bold ${isRare ? 'text-purple-300' : 'text-gray-200'}`}>
+                                                                {lang === 'zh' ? ore.nameTC : ore.name}
+                                                                {isRare && <i className="fa-solid fa-star text-[10px] ml-2 text-purple-500 animate-pulse"></i>}
+                                                            </td>
+                                                            <td className="p-4 text-gray-500 hidden sm:table-cell text-xs font-mono">
+                                                                {formatChance(ore.chance)}
+                                                            </td>
+                                                            <td className="p-4 font-mono text-orange-300 font-bold bg-orange-900/5 group-hover:bg-orange-900/10 transition">
+                                                                {formatChance(probSingle)}
+                                                            </td>
+                                                            <td className="p-4 font-mono text-emerald-300">
+                                                                {formatChance(probMin)}
+                                                            </td>
+                                                            {selectedRock.minSpawns !== selectedRock.maxSpawns && (
+                                                                <td className="p-4 font-mono text-emerald-400">
+                                                                    {formatChance(probMax)}
+                                                                </td>
+                                                            )}
+                                                        </tr>
+                                                    )
+                                                })
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            {/* FAQ SECTION */}
+                            <div className="grid md:grid-cols-2 gap-4 mt-8">
+                                {t.faqItems.map((item, i) => (
+                                    <div key={i} className="glass-panel p-5 rounded-xl border border-gray-700/50 hover:border-orange-500/30 transition duration-300">
+                                        <h4 className="text-orange-400 font-bold mb-2 text-sm flex items-start gap-2">
+                                            <i className="fa-solid fa-circle-question mt-1 opacity-50"></i> {item.q}
+                                        </h4>
+                                        <p className="text-gray-400 text-xs leading-relaxed pl-5">{item.a}</p>
+                                    </div>
+                                ))}
+                            </div>
+
+                        </div>
+                    </main>
+
+                    {/* FOOTER */}
+                    <footer className="bg-gray-950 border-t border-gray-900 py-8 mt-auto">
+                        <div className="max-w-7xl mx-auto px-4 text-center">
+                            <p className="text-gray-600 text-sm mb-3">
+                                {lang === 'zh' ? 'The Forge Calculator 是粉絲製作的工具。與 Roblox 無關。' : 'The Forge Calculator is a fan-made tool. Not affiliated with Roblox.'}
+                            </p>
+                            <div className="flex justify-center gap-6 text-sm text-gray-500 font-medium mb-4">
+                                <a href="the-forge-privacy.html" className="hover:text-orange-500 transition">{t.footer.privacy}</a>
+                                <a href="the-forge-terms.html" className="hover:text-orange-500 transition">{t.footer.terms}</a>
+                                <a href="the-forge-contact.html" className="hover:text-orange-500 transition">{t.footer.contact}</a>
+                            </div>
+                            <p className="text-[10px] text-gray-800 mt-2 uppercase tracking-widest">&copy; 2026 Forgecalc.org</p>
+                        </div>
+                    </footer>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

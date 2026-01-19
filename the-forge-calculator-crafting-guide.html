@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Comprehensive guide for The Forge Roblox: Calculator manual, crafting strategies, ore thresholds, and detailed FAQs.">
+    <title>The Forge Calculator - Complete Guide & FAQ</title>
+    <!-- SYSTEM DEFAULT ICON (Favicon) - SVG Data URI -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚒️</text></svg>">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        gray: {
+                            750: '#2d3748',
+                            850: '#1a202c',
+                            950: '#0b0f19', // Darker background matching index
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0b0f19; }
+        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b0f19;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(234, 88, 12, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.08) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: #e2e8f0;
+        }
+
+        .glass-panel { background: rgba(17, 24, 39, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .glass-nav { background: rgba(11, 15, 25, 0.85); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Typography improvements */
+        .prose-custom h2 { color: #fff; font-weight: 800; font-size: 1.8rem; margin-top: 2rem; margin-bottom: 1rem; border-bottom: 1px solid #374151; padding-bottom: 0.5rem; }
+        .prose-custom h3 { color: #fdba74; font-weight: 700; font-size: 1.3rem; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+        .prose-custom h4 { color: #e5e7eb; font-weight: 600; font-size: 1.1rem; margin-top: 1rem; margin-bottom: 0.5rem; }
+        .prose-custom p { color: #9ca3af; margin-bottom: 1rem; line-height: 1.7; }
+        .prose-custom ul { list-style-type: disc; padding-left: 1.5rem; color: #9ca3af; margin-bottom: 1rem; }
+        .prose-custom ol { list-style-type: decimal; padding-left: 1.5rem; color: #9ca3af; margin-bottom: 1rem; }
+        .prose-custom li { margin-bottom: 0.5rem; }
+        .prose-custom strong { color: #f97316; }
+
+        /* Sidebar sticky */
+        .sticky-sidebar {
+            position: sticky;
+            top: 6rem;
+            max-height: calc(100vh - 8rem);
+            overflow-y: auto;
+        }
+
+        /* Active TOC link */
+        .toc-link.active { color: #f97316; border-left-color: #f97316; background: rgba(249, 115, 22, 0.1); }
+
+        /* Summary marker styling */
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+    </style>
+</head>
+<body class="text-gray-100 font-sans min-h-screen flex flex-col selection:bg-orange-500 selection:text-white">
+
+    <!-- Navbar -->
+    <nav class="glass-nav sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center gap-3 group">
+                    <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-600/20 transform group-hover:rotate-12 transition-transform duration-300">
+                        <i class="fa-solid fa-hammer text-white text-lg"></i>
+                    </div>
+                    <div class="flex flex-col leading-tight">
+                        <span class="font-bold text-lg tracking-tight hidden sm:block text-white group-hover:text-orange-100 transition">The Forge</span>
+                        <span class="font-bold text-sm tracking-tight text-orange-500 hidden sm:block group-hover:text-orange-400 transition">Guide</span>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight sm:hidden text-white">TFC</span>
+                </a>
+
+                <!-- Nav Links -->
+                <div class="flex items-center gap-3 md:gap-4">
+                    <div class="hidden md:flex items-center space-x-1 bg-gray-800/50 p-1 rounded-lg border border-gray-700/50">
+                        <a href="index.html" class="text-gray-400 hover:text-white hover:bg-gray-700/50 px-3 py-1.5 rounded-md text-sm font-medium transition" data-i18n="nav_calculator">Calculator</a>
+                        <a href="forgecalculator.html" class="text-gray-400 hover:text-white hover:bg-gray-700/50 px-3 py-1.5 rounded-md text-sm font-medium transition" data-i18n="nav_mining">Mining</a>
+                        <a href="the-forge-inventory-optimizer.html" class="text-gray-400 hover:text-white hover:bg-gray-700/50 px-3 py-1.5 rounded-md text-sm font-medium transition" data-i18n="nav_optimizer">Optimizer</a>
+                        <a href="the-forge-mini-wiki.html" class="text-gray-400 hover:text-white hover:bg-gray-700/50 px-3 py-1.5 rounded-md text-sm font-medium transition" data-i18n="nav_wiki">Wiki</a>
+                        <a href="the-forge-calculator-crafting-guide.html" class="bg-gray-700 text-white shadow px-3 py-1.5 rounded-md text-sm font-medium transition" data-i18n="nav_faq">Guide</a>
+                    </div>
+                    
+                    <!-- Language Switcher -->
+                    <button id="lang-toggle" onclick="toggleLanguage()" class="flex items-center gap-2 px-3 py-1.5 rounded-full border border-gray-700 hover:border-orange-500 hover:text-orange-500 transition text-xs font-mono bg-gray-800/80 backdrop-blur group cursor-pointer">
+                        <i class="fa-solid fa-globe group-hover:rotate-180 transition-transform duration-500"></i>
+                        <span id="current-lang" class="font-bold">EN</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            
+            <!-- Sidebar Navigation (TOC) -->
+            <aside class="hidden lg:block lg:col-span-1">
+                <nav class="sticky-sidebar glass-panel rounded-xl p-4 custom-scrollbar">
+                    <h3 class="font-bold text-white mb-4 px-2 uppercase text-xs tracking-wider text-gray-400 flex items-center gap-2" data-i18n="toc_title">
+                        <i class="fa-solid fa-list-ul text-orange-500"></i> On This Page
+                    </h3>
+                    <ul class="space-y-1 text-sm text-gray-400">
+                        <li><a href="#about-calculator" class="toc-link block py-1.5 px-3 border-l-2 border-transparent hover:text-white hover:border-gray-500 transition" data-i18n="toc_about">About The Calculator</a></li>
+                        <li><a href="#how-it-works" class="toc-link block py-1.5 px-3 border-l-2 border-transparent hover:text-white hover:border-gray-500 transition" data-i18n="toc_how_works">How It Works</a></li>
+                        <li><a href="#how-to-use" class="toc-link block py-1.5 px-3 border-l-2 border-transparent hover:text-white hover:border-gray-500 transition" data-i18n="toc_usage">How To Use</a></li>
+                        <li><a href="#calc-faq" class="toc-link block py-1.5 px-3 border-l-2 border-transparent hover:text-white hover:border-gray-500 transition" data-i18n="toc_calc_faq">Calculator FAQ</a></li>
+                        <li class="my-2 border-t border-gray-700/50"></li>
+                        <li><a href="#crafting-guide" class="toc-link block py-1.5 px-3 border-l-2 border-transparent hover:text-white hover:border-gray-500 transition" data-i18n="toc_crafting_guide">Crafting Guide (Start)</a></li>
+                        <li><a href="#mini-games" class="toc-link block py-1.5 px-3 border-l-2 border-transparent hover:text-white hover:border-gray-500 transition" data-i18n="toc_mini_games">Mini-Games</a></li>
+                        <li><a href="#ores-traits" class="toc-link block py-1.5 px-3 border-l-2 border-transparent hover:text-white hover:border-gray-500 transition" data-i18n="toc_ores_traits">Ores & Traits</a></li>
+                        <li><a href="#thresholds" class="toc-link block py-1.5 px-3 border-l-2 border-transparent hover:text-white hover:border-gray-500 transition" data-i18n="toc_thresholds">Ore Thresholds</a></li>
+                        <li><a href="#crafting-goals" class="toc-link block py-1.5 px-3 border-l-2 border-transparent hover:text-white hover:border-gray-500 transition" data-i18n="toc_goals">Crafting Goals</a></li>
+                        <li><a href="#common-mistakes" class="toc-link block py-1.5 px-3 border-l-2 border-transparent hover:text-white hover:border-gray-500 transition" data-i18n="toc_mistakes">Common Mistakes</a></li>
+                        <li><a href="#guide-faq" class="toc-link block py-1.5 px-3 border-l-2 border-transparent hover:text-white hover:border-gray-500 transition" data-i18n="toc_guide_faq">Crafting FAQ</a></li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="lg:col-span-3 prose-custom">
+                
+                <!-- Intro Section -->
+                <section id="about-calculator" class="mb-12 scroll-mt-24">
+                    <h1 class="text-3xl sm:text-4xl font-black text-white mb-6 bg-gradient-to-r from-orange-500 to-yellow-500 bg-clip-text text-transparent inline-block" data-i18n="page_title">The Forge Calculator & Crafting Guide</h1>
+                    
+                    <div class="glass-panel p-6 rounded-xl border-l-4 border-orange-500 mb-8 relative overflow-hidden">
+                        <!-- Decorative background -->
+                        <div class="absolute right-0 top-0 w-32 h-32 bg-orange-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                        
+                        <h2 class="!mt-0 flex items-center gap-3" data-i18n="what_is_calc">What is The Forge Calculator?</h2>
+                        <h4 data-i18n="calc_subtitle" class="text-orange-300">A calculator for the Roblox game - The Forge</h4>
+                        <p data-i18n="calc_desc_1">The Forge game mechanics are deep, relying on complex algorithms involving ore weight, rarity averages, and hidden probability tables. Guesswork is expensive. Wasting hard-earned Essence and high-tier ores on a poorly planned craft can set your progress back by hours. This is where The Forge Calculator becomes your most valuable asset.</p>
+                        <p data-i18n="calc_desc_2">The Forge Calculator is designed to bridge the gap between RNG (Random Number Generation) and strategy. By analyzing the underlying mechanics of the game, this Forge Calculator empowers players to visualize their results before they ever approach the anvil. It helps players plan forges by simulating ore composition, traits, estimated damage, and armor health, and suggesting efficient crafts based on their inventory.</p>
+                        <p data-i18n="calc_desc_3">In a game where every ore counts, The Forge Calculator serves as your strategic advisor. It eliminates the blind gambling aspect of crafting, replacing it with data-driven decision-making.</p>
+                    </div>
+                </section>
+
+                <section id="how-it-works" class="mb-12 scroll-mt-24">
+                    <h2 data-i18n="how_works_title">How Does The Forge Calculator Work?</h2>
+                    <h4 data-i18n="bridge_rng">Bridge the gap between RNG and strategy</h4>
+                    
+                    <h3 data-i18n="what_calculates">What The Forge Calculator Actually Calculates</h3>
+                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                        <div class="glass-panel p-5 rounded-lg hover:border-orange-500/30 transition border border-transparent">
+                            <h4 class="!mt-0 text-orange-400 flex items-center gap-2" data-i18n="prob_prediction"><i class="fa-solid fa-dice"></i> Probability & Outcome Prediction</h4>
+                            <p class="text-sm" data-i18n="prob_desc">The Forge Calculator does probability and outcome prediction rather than random guesses. It takes your selected ores and runs them through the same kind of probability tables and mechanics used in The Forge crafting system to estimate outcomes for weapons and armor.</p>
+                        </div>
+                        <div class="glass-panel p-5 rounded-lg hover:border-orange-500/30 transition border border-transparent">
+                            <h4 class="!mt-0 text-orange-400 flex items-center gap-2" data-i18n="data_decisions"><i class="fa-solid fa-chart-pie"></i> Data-Informed Decisions</h4>
+                            <p class="text-sm" data-i18n="data_desc">It uses forge probability tables derived from the game’s mechanics to compute the likelihood of each possible result. The Forge Calculator shows percentage chances for different item types, highlights trait activation and strength, and visualizes expected damage, stats, and odds—helping you plan before you spend valuable resources.</p>
+                        </div>
+                    </div>
+
+                    <h3 data-i18n="key_variables">What the Key Variables Mean</h3>
+                    <ul class="space-y-2">
+                        <li><strong data-i18n="var_world">World:</strong> <span data-i18n="var_world_desc">Different worlds (e.g., World 1, World 2, World 3) have different probability distributions and ore pools, so the same ore mix can give different chances depending on the world.</span></li>
+                        <li><strong data-i18n="var_ores">Ores:</strong> <span data-i18n="var_ores_desc">Each ore has a multiplier value (affecting base stats) and a rarity/trait profile. The Forge Calculator uses the combination of ores you select to determine likely outcomes.</span></li>
+                        <li><strong data-i18n="var_traits">Traits:</strong> <span data-i18n="var_traits_desc">Traits are special attributes active when an ore constitutes at least 10% of your total mix. The strength scales with percentage up to around 30%.</span></li>
+                    </ul>
+
+                    <h3 data-i18n="data_sources">Data Sources and Updates</h3>
+                    <p data-i18n="data_sources_desc">The Forge Calculator’s probability tables and multiplier values are based on game mechanics extracted from The Forge itself, often combined with community-verified testing. Although results are precise for the given model, actual in-game outcomes still involve randomness.</p>
+                </section>
+
+                <section id="how-to-use" class="mb-12 scroll-mt-24">
+                    <h2 data-i18n="how_to_use">How to Use The Forge Calculator</h2>
+                    <p data-i18n="intuitive_design">Intuitive design for seamless gameplay integration</p>
+                    <div class="space-y-4">
+                        <div class="flex gap-4 items-start">
+                            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-orange-600 flex items-center justify-center font-bold shadow-lg shadow-orange-600/30">1</div>
+                            <div>
+                                <h4 class="!mt-0" data-i18n="step1_title">Step 1: Select Ores & Mode</h4>
+                                <p data-i18n="step1_desc">Begin by selecting your current stock of ores into the dashboard. Choose the mode either "Weapon" or "Armor".</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start">
+                            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-orange-600 flex items-center justify-center font-bold shadow-lg shadow-orange-600/30">2</div>
+                            <div>
+                                <h4 class="!mt-0" data-i18n="step2_title">Step 2: Preview Results</h4>
+                                <p data-i18n="step2_desc">The Calculator runs thousands of micro-simulations. It generates detailed reports: Success Probability, Multiplier, Estimated damage/defense, DPS, Variants, Composition & Traits.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start">
+                            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-orange-600 flex items-center justify-center font-bold shadow-lg shadow-orange-600/30">3</div>
+                            <div>
+                                <h4 class="!mt-0" data-i18n="step3_title">Step 3: Change Input and Re-run</h4>
+                                <p data-i18n="step3_desc">Change the input and rerun as many times as needed. Find a way to maximize your multiplier and forge chance.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start">
+                            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-orange-600 flex items-center justify-center font-bold shadow-lg shadow-orange-600/30">4</div>
+                            <div>
+                                <h4 class="!mt-0" data-i18n="step4_title">Step 4: Optimization</h4>
+                                <p data-i18n="step4_desc">Use the "Forge Optimizer" feature. The engine will suggest adding or removing specific ores to push stats into a higher tier.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="calc-faq" class="mb-12 scroll-mt-24">
+                    <h2 data-i18n="calc_faq_title">The Forge Calculator FAQs</h2>
+                    <p class="mb-6" data-i18n="calc_faq_subtitle">Common inquiries about The Forge & The Forge Calculator</p>
+                    
+                    <div class="space-y-3">
+                        <details class="group glass-panel rounded-lg open:ring-1 open:ring-orange-500/50" open>
+                            <summary class="flex justify-between items-center cursor-pointer p-4 font-bold select-none"><span data-i18n="faq_c_1_q">Is the Forge Calculator officially affiliated with Roblox?</span><i class="fa-solid fa-chevron-down group-open:rotate-180 transition"></i></summary>
+                            <div class="p-4 pt-0 text-sm text-gray-400 border-t border-gray-700/50 mt-2 leading-relaxed" data-i18n="faq_c_1_a">No. The Forge Calculator is a fan-made tool developed by passionate players. It is not officially endorsed by Roblox Corporation.</div>
+                        </details>
+                        <details class="group glass-panel rounded-lg open:ring-1 open:ring-orange-500/50" open>
+                            <summary class="flex justify-between items-center cursor-pointer p-4 font-bold select-none"><span data-i18n="faq_c_2_q">How accurate is The Forge Calculator?</span><i class="fa-solid fa-chevron-down group-open:rotate-180 transition"></i></summary>
+                            <div class="p-4 pt-0 text-sm text-gray-400 border-t border-gray-700/50 mt-2 leading-relaxed" data-i18n="faq_c_2_a">Highly accurate regarding weight classes and tier averages. However, since the game uses RNG, we can predict probabilities (e.g., 80% chance) but cannot guarantee single outcomes.</div>
+                        </details>
+                        <details class="group glass-panel rounded-lg open:ring-1 open:ring-orange-500/50" open>
+                            <summary class="flex justify-between items-center cursor-pointer p-4 font-bold select-none"><span data-i18n="faq_c_3_q">Why does it suggest a different weapon than I got?</span><i class="fa-solid fa-chevron-down group-open:rotate-180 transition"></i></summary>
+                            <div class="p-4 pt-0 text-sm text-gray-400 border-t border-gray-700/50 mt-2 leading-relaxed" data-i18n="faq_c_3_a">This happens due to the "Weight" mechanic. If you are on the borderline between two types (e.g., Katana vs Great Sword), the game flips a coin. The calculator shows this percentage split.</div>
+                        </details>
+                        <details class="group glass-panel rounded-lg open:ring-1 open:ring-orange-500/50" open>
+                            <summary class="flex justify-between items-center cursor-pointer p-4 font-bold select-none"><span data-i18n="faq_c_4_q">Can The Forge Calculator predict Mythic Race rerolls?</span><i class="fa-solid fa-chevron-down group-open:rotate-180 transition"></i></summary>
+                            <div class="p-4 pt-0 text-sm text-gray-400 border-t border-gray-700/50 mt-2 leading-relaxed" data-i18n="faq_c_4_a">We are working on a section for race rerolls (e.g., Demon or Angel). Currently, the tool focuses on weapon and armor crafting.</div>
+                        </details>
+                        <details class="group glass-panel rounded-lg open:ring-1 open:ring-orange-500/50" open>
+                            <summary class="flex justify-between items-center cursor-pointer p-4 font-bold select-none"><span data-i18n="faq_c_5_q">Will it be updated with new ores?</span><i class="fa-solid fa-chevron-down group-open:rotate-180 transition"></i></summary>
+                            <div class="p-4 pt-0 text-sm text-gray-400 border-t border-gray-700/50 mt-2 leading-relaxed" data-i18n="faq_c_5_a">Yes. We aim to update the database within 24 hours of new updates to reflect new materials.</div>
+                        </details>
+                    </div>
+                </section>
+
+                <hr class="border-gray-700 my-16">
+
+                <!-- Crafting Guide Part -->
+                <section id="crafting-guide" class="mb-12 scroll-mt-24">
+                    <h1 class="text-3xl sm:text-4xl font-black text-white mb-6 bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent inline-block" data-i18n="guide_title">The Forge Crafting Guide (Beginner to Advanced)</h1>
+                    <p data-i18n="guide_subtitle">Master The Forge crafting system. Learn mini-games, ores, multipliers, and traits.</p>
+                    
+                    <div class="glass-panel p-6 rounded-xl border-l-4 border-blue-500 my-8">
+                        <h3 class="!mt-0" data-i18n="tldr_title">Quick TL;DR for busy players</h3>
+                        <ul class="space-y-2">
+                            <li data-i18n="tldr_1"><strong>Crafting = three mini-games.</strong> Pick your item, add ores, then Smelt, Pour, and Hammer.</li>
+                            <li data-i18n="tldr_2"><strong>Ores drive the stats.</strong> Final multiplier is the weighted average.</li>
+                            <li data-i18n="tldr_3"><strong>Traits need enough share.</strong> Aim for 10%/20%/30% thresholds.</li>
+                            <li data-i18n="tldr_4"><strong>Rare ores deserve a plan.</strong> Use commons to learn mini-games; save Legends for keepsakes.</li>
+                            <li data-i18n="tldr_5"><strong>Use tools instead of guessing.</strong> Simulate mixes with the calculator first.</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section id="mini-games" class="mb-12 scroll-mt-24">
+                    <h2 data-i18n="minigames_title">Roblox The Forge crafting mini-games: how it works</h2>
+                    <p data-i18n="minigames_intro">The Forge crafting loop follows the same rhythm every time:</p>
+                    
+                    <ol class="space-y-4">
+                        <li><strong data-i18n="mg_step1">1. Where to craft:</strong> <span data-i18n="mg_step1_d">Walk to Stonewake's Cross. Look for the anvil icon on compass.</span></li>
+                        <li><strong data-i18n="mg_step2">2. Pick what you are crafting:</strong> <span data-i18n="mg_step2_d">Choose Weapon or Armor, then select the exact type.</span></li>
+                        <li><strong data-i18n="mg_step3">3. Add ores to the crucible:</strong> <span data-i18n="mg_step3_d">Mix a few ores. Match what you planned in the calculator.</span></li>
+                    </ol>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                        <div class="bg-gray-900 p-4 rounded-lg border border-gray-700 hover:border-red-500/50 transition">
+                            <h4 class="!mt-0 text-red-500" data-i18n="mg_smelt">Smelt: fill heat bar</h4>
+                            <p class="text-xs" data-i18n="mg_smelt_d">Pump bellows until bar is full. Short drops are ok; long drops lower quality.</p>
+                        </div>
+                        <div class="bg-gray-900 p-4 rounded-lg border border-gray-700 hover:border-yellow-500/50 transition">
+                            <h4 class="!mt-0 text-yellow-500" data-i18n="mg_pour">Pour: stay in yellow</h4>
+                            <p class="text-xs" data-i18n="mg_pour_d">Hold/release to keep indicator in yellow zone. More time centered = better score.</p>
+                        </div>
+                        <div class="bg-gray-900 p-4 rounded-lg border border-gray-700 hover:border-blue-500/50 transition">
+                            <h4 class="!mt-0 text-blue-500" data-i18n="mg_hammer">Hammer: perfect timing</h4>
+                            <p class="text-xs" data-i18n="mg_hammer_d">Click when circle touches inner ring. Perfect streaks unlock best rolls.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="ores-traits" class="mb-12 scroll-mt-24">
+                    <h2 data-i18n="rarity_title">Forge ore rarities, multipliers, and traits explained</h2>
+                    <h3 data-i18n="rarity_h">Forge ore rarities</h3>
+                    <p data-i18n="rarity_d">Rarities flow from Common -> Uncommon -> Rare -> Epic -> Relic -> Legendary -> Divine -> Mythical. Higher rarity = better multipliers.</p>
+                    
+                    <h3 data-i18n="mult_h">Forge multipliers (why your mix matters)</h3>
+                    <p data-i18n="mult_d">The game averages your ore multipliers. A pile of low-multiplier commons drags the result down. Concentrating high-multiplier ores keeps the average high.</p>
+
+                    <h3 data-i18n="traits_h">Forge traits and thresholds</h3>
+                    <p data-i18n="traits_d">Mid-to-late game ores add traits (Armor, HP, Burn). The trait only applies when the ore is a meaningful share (10%+, with boosts at 20% and 30%).</p>
+                </section>
+
+                <section id="thresholds" class="mb-12 scroll-mt-24">
+                    <h2 data-i18n="threshold_title">Forge trait thresholds and ore counts</h2>
+                    <p class="text-sm italic mb-4 text-gray-500" data-i18n="threshold_source">Source: Online Station</p>
+                    
+                    <div class="overflow-x-auto rounded-lg border border-gray-700">
+                        <table class="w-full text-sm text-left text-gray-400">
+                            <thead class="bg-gray-800 text-white uppercase text-xs">
+                                <tr>
+                                    <th class="px-4 py-3" data-i18n="th_item">Item</th>
+                                    <th class="px-4 py-3" data-i18n="th_min">Min Ores (Min %)</th>
+                                    <th class="px-4 py-3" data-i18n="th_rec">Recommended (Rec %)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-700 bg-gray-900/50">
+                                <tr><td class="px-4 py-2 font-medium">Dagger</td><td class="px-4 py-2">3 (100%)</td><td class="px-4 py-2">3 (100%)</td></tr>
+                                <tr><td class="px-4 py-2 font-medium">Straight Sword</td><td class="px-4 py-2">4 (~14%)</td><td class="px-4 py-2">6 (~86%)</td></tr>
+                                <tr><td class="px-4 py-2 font-medium">Katana</td><td class="px-4 py-2">9 (~10%)</td><td class="px-4 py-2">12 (~72%)</td></tr>
+                                <tr><td class="px-4 py-2 font-medium">Great Sword</td><td class="px-4 py-2">12 (~3%)</td><td class="px-4 py-2">16 (~69%)</td></tr>
+                                <tr><td class="px-4 py-2 font-medium">Colossal Sword</td><td class="px-4 py-2">21 (~2%)</td><td class="px-4 py-2">50 (~70%)</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section id="crafting-goals" class="mb-12 scroll-mt-24">
+                    <h2 data-i18n="goals_title">Simple Forge crafting goals</h2>
+                    <div class="space-y-6">
+                        <div class="glass-panel p-5 rounded-lg border-l-2 border-green-500">
+                            <h4 class="!mt-0" data-i18n="goal_1">1) Early-game (Island 1 & 2)</h4>
+                            <p class="text-sm mb-0" data-i18n="goal_1_d">Use mostly Rare and Epic ores with solid multipliers. Save Legendary and Mythical ores until you know the mini-games well. Prioritize HP or Armor traits over flashy damage effects. Run a few mixes in the crafting calculator to compare tanky versus damage recipes, then craft the one that keeps you alive.</p>
+                        </div>
+                        <div class="glass-panel p-5 rounded-lg border-l-2 border-yellow-500">
+                            <h4 class="!mt-0" data-i18n="goal_2">2) Mid-game (Farming Gold)</h4>
+                            <p class="text-sm mb-0" data-i18n="goal_2_d">Invest better Rares/Legendaries into main weapon. Chase Crit/Burn/Speed. Keep armor balanced. Start with a recipe from best forge setups, tweak it in the crafting calculator, then note the exact mix you want to craft in-game.</p>
+                        </div>
+                        <div class="glass-panel p-5 rounded-lg border-l-2 border-purple-500">
+                            <h4 class="!mt-0" data-i18n="goal_3">3) End-game (Deep Caves)</h4>
+                            <p class="text-sm mb-0" data-i18n="goal_3_d">Reserve Mythical/Divine ores. Ensure traits trigger (10%+). Practice mini-games for Perfect chains. Use the inventory optimizer to decide which ores to burn now versus save for your final crafts.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Restored Section: Common Mistakes -->
+                <section id="common-mistakes" class="mb-12 scroll-mt-24">
+                    <h2 data-i18n="mistakes_title">Common Forge crafting mistakes</h2>
+                    <div class="grid gap-6">
+                        <div class="glass-panel p-5 rounded-lg border-l-4 border-red-500/50">
+                            <h4 class="!mt-0 text-red-200" data-i18n="mistake_1">Mistake 1: throwing in a bit of everything</h4>
+                            <p class="text-sm mb-0 text-gray-400" data-i18n="mistake_1_d">Mixing every ore you own dilutes multipliers and usually fails to trigger traits. Stick to two to four ores that support one goal, and confirm the percentages in the crafting calculator.</p>
+                        </div>
+                        <div class="glass-panel p-5 rounded-lg border-l-4 border-red-500/50">
+                            <h4 class="!mt-0 text-red-200" data-i18n="mistake_2">Mistake 2: wasting rare ores on throwaway gear</h4>
+                            <p class="text-sm mb-0 text-gray-400" data-i18n="mistake_2_d">Legendary and Mythical ores vanish fast if you use them to see what happens. Practice mini-games with cheaper ores, then spend rares on weapons or armor you intend to keep. The inventory optimizer helps you schedule those crafts.</p>
+                        </div>
+                        <div class="glass-panel p-5 rounded-lg border-l-4 border-red-500/50">
+                            <h4 class="!mt-0 text-red-200" data-i18n="mistake_3">Mistake 3: ignoring traits completely</h4>
+                            <p class="text-sm mb-0 text-gray-400" data-i18n="mistake_3_d">Traits often separate good items from broken ones. Decide which trait matters, make sure the trait ore is a large enough share (10% or more), and avoid conflicting traits in one recipe unless you truly need them together.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Restored Section: Crafting Guide FAQ -->
+                <section id="guide-faq" class="mb-12 scroll-mt-24">
+                    <h2 data-i18n="g_faq_title">Forge crafting FAQ: quick answers</h2>
+                    <div class="space-y-3">
+                        <details class="group glass-panel rounded-lg open:ring-1 open:ring-blue-500/50">
+                            <summary class="flex justify-between items-center cursor-pointer p-4 font-bold select-none"><span data-i18n="g_q1">Does a higher multiplier always mean a better item?</span><i class="fa-solid fa-chevron-down group-open:rotate-180 transition"></i></summary>
+                            <div class="p-4 pt-0 text-sm text-gray-400 border-t border-gray-700/50 mt-2 leading-relaxed" data-i18n="g_a1">Higher multipliers are usually good, but the right traits and item type can beat a raw multiplier spike. A slightly lower multiplier with perfect traits can outperform a higher one with useless effects.</div>
+                        </details>
+                        <details class="group glass-panel rounded-lg open:ring-1 open:ring-blue-500/50">
+                            <summary class="flex justify-between items-center cursor-pointer p-4 font-bold select-none"><span data-i18n="g_q2">How many ores should I use in one craft?</span><i class="fa-solid fa-chevron-down group-open:rotate-180 transition"></i></summary>
+                            <div class="p-4 pt-0 text-sm text-gray-400 border-t border-gray-700/50 mt-2 leading-relaxed" data-i18n="g_a2">Most The Forge crafting recipes run on two to four ores. More than that dilutes traits and drags your average multiplier down.</div>
+                        </details>
+                        <details class="group glass-panel rounded-lg open:ring-1 open:ring-blue-500/50">
+                            <summary class="flex justify-between items-center cursor-pointer p-4 font-bold select-none"><span data-i18n="g_q3">Is there a perfect The Forge crafting recipe?</span><i class="fa-solid fa-chevron-down group-open:rotate-180 transition"></i></summary>
+                            <div class="p-4 pt-0 text-sm text-gray-400 border-t border-gray-700/50 mt-2 leading-relaxed" data-i18n="g_a3">No universal best. Depends on playstyle and inventory.</div>
+                        </details>
+                    </div>
+                </section>
+
+                <div class="bg-gradient-to-r from-orange-900/50 to-gray-900 p-6 rounded-xl border border-orange-500/30 text-center">
+                    <h3 class="!mt-0 text-white" data-i18n="last_check_title">Last Forge crafting checks</h3>
+                    <p data-i18n="last_check_d">Spend rares only after a quick audit: make sure trait ores clear the 10/20/30 thresholds, warm up mini-games, then run your mix through the calculator.</p>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-950 border-t border-gray-900 py-8 mt-auto z-10 relative">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-gray-600 text-sm mb-3">
+                <span data-i18n="footer_disclaimer">The Forge Calculator is a fan-made tool. Not affiliated with Roblox.</span>
+            </p>
+            <div class="flex justify-center flex-wrap gap-x-6 gap-y-2 text-sm text-gray-500 font-medium mb-4">
+                <a href="the-forge-privacy.html" class="hover:text-orange-500 transition" data-i18n="footer_privacy">Privacy Policy</a>
+                <a href="the-forge-contact.html" class="hover:text-orange-500 transition" data-i18n="footer_contact">Contact</a>
+                <a href="the-forge-calculator-crafting-guide.html" class="hover:text-orange-500 transition" data-i18n="footer_faq_link">FAQs</a>
+            </div>
+            <p class="text-[10px] text-gray-800 mt-2 uppercase tracking-widest">&copy; 2026 Forgecalc.org</p>
+        </div>
+    </footer>
+
+    <!-- I18N Script -->
+    <script>
+        const I18N = {
+            en: {
+                nav_calculator: "Calculator", nav_optimizer: "Optimizer", nav_wiki: "Wiki", nav_faq: "Guide", nav_mining: "Mining",
+                toc_title: "On This Page", toc_about: "About The Calculator", toc_how_works: "How It Works", toc_usage: "How To Use", toc_calc_faq: "Calculator FAQ", toc_crafting_guide: "Crafting Guide (Start)", toc_mini_games: "Mini-Games", toc_ores_traits: "Ores & Traits", toc_thresholds: "Ore Thresholds", toc_goals: "Crafting Goals", toc_mistakes: "Common Mistakes", toc_guide_faq: "Crafting FAQ",
+                page_title: "The Forge Calculator & Crafting Guide",
+                what_is_calc: "What is The Forge Calculator?", calc_subtitle: "A calculator for the Roblox game - The Forge",
+                calc_desc_1: "The Forge game mechanics are deep, relying on complex algorithms involving ore weight, rarity averages, and hidden probability tables. Guesswork is expensive. Wasting hard-earned Essence and high-tier ores on a poorly planned craft can set your progress back by hours. This is where The Forge Calculator becomes your most valuable asset.",
+                calc_desc_2: "The Forge Calculator is designed to bridge the gap between RNG (Random Number Generation) and strategy. By analyzing the underlying mechanics of the game, this Forge Calculator empowers players to visualize their results before they ever approach the anvil. It helps players plan forges by simulating ore composition, traits, estimated damage, and armor health, and suggesting efficient crafts based on their inventory.",
+                calc_desc_3: "In a game where every ore counts, The Forge Calculator serves as your strategic advisor. It eliminates the blind gambling aspect of crafting, replacing it with data-driven decision-making.",
+                how_works_title: "How Does The Forge Calculator Work?", bridge_rng: "Bridge the gap between RNG and strategy", what_calculates: "What The Forge Calculator Actually Calculates",
+                prob_prediction: "Probability & Outcome Prediction", prob_desc: "The Forge Calculator does probability and outcome prediction rather than random guesses. It takes your selected ores and runs them through the same kind of probability tables and mechanics used in The Forge crafting system to estimate outcomes for weapons and armor.",
+                data_decisions: "Data-Informed Decisions", data_desc: "It uses forge probability tables derived from the game’s mechanics to compute the likelihood of each possible result. The Forge Calculator shows percentage chances for different item types, highlights trait activation and strength, and visualizes expected damage, stats, and odds—helping you plan before you spend valuable resources.",
+                key_variables: "What the Key Variables Mean in The Forge Calculator", var_world: "World", var_world_desc: "Different worlds (e.g., World 1, World 2, World 3) in The Forge have different probability distributions and ore pools, so the same ore mix can give different chances depending on the world you’re forging in.",
+                var_ores: "Ores", var_ores_desc: "Each ore has a multiplier value (affecting base stats) and a rarity/trait profile. The Forge Calculator uses the combination of ores you select—up to four different types—to determine how these factors influence the likely outcome.",
+                var_traits: "Traits", var_traits_desc: "Traits are special attributes active when an ore constitutes at least 10% of your total mix. The strength scales with percentage up to around 30%. For example, if a particular ore that boosts fire damage makes up 20% of your mix, its associated trait will contribute proportionally more effect than if it were only 10%.",
+                data_sources: "Data Sources and Updates", data_sources_desc: "The Forge Calculator’s probability tables and multiplier values are based on game mechanics extracted from The Forge itself, often combined with community-verified testing. Multiplier values, trait activation rules, and outcome distributions are modeled to match how The Forge handles ore composition, probabilities, and stat outputs in real gameplay. The Forge Calculator is designed to reflect the current state of the game based on the latest known tables. Although results are precise for the given model, actual in-game outcomes still involve randomness, so the calculator represents predicted expectations, not guarantees.",
+                how_to_use: "How to Use The Forge Calculator", intuitive_design: "Intuitive design for seamless gameplay integration",
+                step1_title: "Step 1: Select Ores & Mode", step1_desc: "Begin by selecting your current stock of ores into the dashboard. Choose the mode either \"Weapon\" or \"Armor\". The Forge Calculator interface allows you to select from all currently available ores in the game, from basic Stone and Copper to rare endgame materials.",
+                step2_title: "Step 2: Preview Results", step2_desc: "The Forge Calculator runs thousands of micro-simulations automatically based on your inputs. Within seconds, it generates a report detailed: Success Probability, Multiplier, Estimated damage/defense, DPS, Variants, Composition & Traits, and Forge Chances.",
+                step3_title: "Step 3: Change Input and Re-run", step3_desc: "You can change the input and rerun the forge calculator as many times as you need. Find a way that can maximize your multiplier and forge chance.",
+                step4_title: "Step 4: Optimization", step4_desc: "If the results aren't what you hoped for, use the \"Forge Optimizer\" feature. The Forge Calculator engine will suggest adding or removing specific ores to push stats into a higher tier.",
+                calc_faq_title: "The Forge Calculator FAQs", calc_faq_subtitle: "Common inquiries about The Forge & The Forge Calculator",
+                faq_c_1_q: "Is the Forge Calculator officially affiliated with Roblox?", faq_c_1_a: "No. The Forge Calculator is a fan-made tool developed by passionate players of The Forge. It is not officially endorsed by Roblox Corporation or the game developers. It is a utility created to help the community understand game mechanics better.",
+                faq_c_2_q: "How accurate is The Forge Calculator?", faq_c_2_a: "The Forge Calculator is highly accurate regarding weight classes and tier averages. However, please remember that The Forge utilizes RNG (Random Number Generation). While our tool can predict probabilities (e.g., \"80% chance of a Great Sword\"), it cannot guarantee the outcome of a single craft. The tool is best used to understand long-term averages and optimization.",
+                faq_c_3_q: "Why does The Forge Calculator suggest a different weapon than what I got?", faq_c_3_a: "This usually happens due to the \"Weight\" mechanic. If your ore combination places you right on the borderline between two weapon types (e.g., between a Katana and a Great Sword), the game flips a coin based on probability. The Forge Calculator will show you this percentage split (e.g., \"50% Katana / 50% Great Sword\") so you are aware of the risk.",
+                faq_c_4_q: "Can The Forge Calculator predict Mythic Race rerolls?", faq_c_4_a: "While the primary focus is on smithing, we are working on a section for The Forge Calculator that simulates race rerolls based on known drop rates (e.g., the 0.5% chance for Demon or Angel). Currently, the tool focuses on the weapon and armor crafting systems.",
+                faq_c_5_q: "Will The Forge Calculator be updated with new ores?", faq_c_5_a: "Yes. We are committed to keeping The Forge Calculator up-to-date with the latest game updates. If a new update drops, we aim to update The Forge Calculator Roblox database within 24 hours to reflect new materials.",
+                faq_c_6_q: "What is the 'Dilution Rule' and why are my stats low?", faq_c_6_a: "Mixing high-tier ores (like Mythril) with low-tier 'filler' ores (like Stone) averages out the multiplier, drastically lowering your final gear's stats. It is often better to use fewer, high-quality ores than to dilute your pool with weak materials. The Forge calculator visualizes this average to help you avoid weak crafts.",
+                faq_c_7_q: "Why do I die instantly when I spawn?", faq_c_7_a: "You likely have too many 'Glass Cannon' traits stacked (commonly from Eye Ores). If your total Max HP reduction reaches -100%, you will have 0 health and die immediately. Check the 'Traits' section in The Forge Calculator to ensure your build is viable.",
+                faq_c_8_q: "Does the order of ores in the cauldron matter?", faq_c_8_a: "No. The Forge mechanics calculate the total weight and composition percentage. Placing a Legendary ore at the bottom or top of the stack does not change the outcome; only the quantity and type of ores matter.",
+                faq_c_9_q: "What is the fastest way to level up Smithing?", faq_c_9_a: "Currently, crafting high-weight items like Colossal Swords (using 30+ ores) yields the most XP. The more materials you process in a single forge, the higher the experience gain.",
+                faq_c_10_q: "How do Ore Traits work?", faq_c_10_a: "Certain ores (e.g., Fireite, Demonite) carry hidden traits like Burn or Explosion. These are not always visible in the in-game index. The Forge Calculator database includes these hidden values to show you exactly what passives you might roll.",
+                guide_title: "The Forge Crafting Guide (Beginner to Advanced)", guide_subtitle: "Master The Forge crafting system with our comprehensive guide. Learn mini-games, ores, multipliers, and traits to create powerful weapons and armor in Roblox.",
+                tldr_title: "Quick TL;DR for busy players", tldr_1: "<strong>Crafting = three mini-games.</strong> Pick your weapon or armor, add ores, then smelt, pour, and hammer. Clean timing and accuracy push quality up; sloppy inputs lower it.",
+                tldr_2: "<strong>Ores drive the stats.</strong> Each ore has a rarity, multiplier, and sometimes a trait. The final multiplier is essentially the weighted average of what you throw in.",
+                tldr_3: "<strong>Traits need enough share to trigger.</strong> Aim for meaningful percentages (think 10%/20%/30% thresholds) so the trait actually applies to the finished item.",
+                tldr_4: "<strong>Rare ores deserve a plan.</strong> Spend commons and uncommons to learn the mini-games; save Legendary, Mythical, and Divine ores for weapons and armor you will keep.",
+                tldr_5: "<strong>Use tools instead of guessing.</strong> Simulate mixes with the crafting calculator, decide what to spend with the inventory optimizer, and borrow proven recipes from best forge setups.",
+                minigames_title: "Roblox The Forge crafting mini-games: how it works", minigames_intro: "The Forge crafting loop follows the same rhythm every time:",
+                mg_step1: "1. Where to craft:", mg_step1_d: "The Forge sits in Stonewake's Cross between the Potion Seller and the Runemaker (Online Station guide). Track the anvil icon on the compass and walk up to the cauldron to start.",
+                mg_step2: "2. Pick what you are crafting:", mg_step2_d: "Choose Weapon or Armor, then select the exact type (Daggers, Katanas, Light, Medium, or Heavy Armor, and so on).",
+                mg_step3: "3. Add ores to the crucible:", mg_step3_d: "Mix a few ores; watch the live multiplier. Match what you planned in the crafting calculator so the in-game recipe mirrors the simulation and trait thresholds.",
+                mg_smelt: "Smelt: fill the heat bar", mg_smelt_d: "Pump the bellows until the heat bar is full and stable. Pump the bellows hard on the left side to max the heat bar quickly. Letting the bar drop mid-smelt lowers quality; keep pumping if it dips. Short drops are recoverable; long drops risk stepping down a quality tier. Use cheap ores to practice the rhythm before spending rares.",
+                mg_pour: "Pour: stay inside the yellow zone", mg_pour_d: "Keep the indicator inside the yellow zone while the metal flows. Hold and release your mouse to raise or lower the white marker; more time in the yellow zone equals a stronger pour score. Small micro-adjustments beat big swings—avoid overshooting the bar edges. The longer you stay centered, the better the pour score that feeds final quality.",
+                mg_hammer: "Hammer: chain Perfect hits and finish", mg_hammer_d: "Hit the timing prompts cleanly. Click when the circle touches the inner ring to land \"Perfect\" hits—clean timing plus a good ore mix unlocks the best rolls. Perfect streaks boost quality; misses drag it down even with a great ore mix. Focus on tempo over speed—consistent timing matters more than rapid taps.",
+                rarity_title: "Forge ore rarities, multipliers, and traits explained", rarity_h: "Forge ore rarities", rarity_d: "Rarities typically flow from Common, Uncommon, Rare, Epic, Relic, Legendary, Divine, up to Mythical. Higher rarities bring better multipliers, higher sell values, and more frequent traits.",
+                mult_h: "Forge multipliers (why your mix matters)", mult_d: "The game averages your ore multipliers based on how much of each ore you use. A pile of low-multiplier commons drags the result down. Concentrating high-multiplier ores keeps the average high. This is where careful crafting calculator planning pays off.",
+                traits_h: "Forge traits and thresholds", traits_d: "Many mid- to late-game ores add traits like extra Armor or HP, Crit Chance, Dodge, Burn damage, or AoE explosions. The trait only applies when the ore is a meaningful share of the recipe, commonly thought of as 10% or more, with stronger effects at 20% and 30%. Check the trait percentages in the crafting calculator or compare candidate mixes in best forge setups before you craft.",
+                types_h: "Roblox The Forge weapons and armor you can craft",
+                threshold_title: "Forge trait thresholds and ore counts", threshold_source: "Source: Online Station's The Forge forging guide.", th_item: "Item", th_min: "Min Ores (Min %)", th_rec: "Recommended (Rec %)",
+                goals_title: "Simple Forge crafting goals (and how to approach them)",
+                goal_1: "1) Early-game survivability (Island 1 and early Island 2)", goal_1_d: "Use mostly Rare and Epic ores with solid multipliers. Save Legendary and Mythical ores until you know the mini-games well. Prioritize HP or Armor traits over flashy damage effects. Run a few mixes in the crafting calculator to compare tanky versus damage recipes, then craft the one that keeps you alive.",
+                goal_2: "2) Mid-game damage builds (comfortable in caves, farming gold)", goal_2_d: "Invest better Rare and Legendary ores into your main weapon. Chase traits like Crit Chance, Burn, AoE, or Speed to clear mobs quickly. Keep armor balanced so you can still survive mistakes. Start with a recipe from best forge setups, tweak it in the crafting calculator, then note the exact mix you want to craft in-game.",
+                goal_3: "3) Late-game or end-game builds (deep caves, rare ore farming)", goal_3_d: "Reserve your highest-multiplier Mythical and Divine ores for long-term gear. Make sure trait ores hold enough share to trigger; check 10%, 20%, and 30% thresholds before you spend. Practice mini-games until Perfect chains are consistent—rare ores hurt to waste at this tier. Use the inventory optimizer to decide which ores to burn now versus save for your final crafts.",
+                mistakes_title: "Common Forge crafting mistakes (and how to avoid them)",
+                mistake_1: "Mistake 1: throwing in a bit of everything", mistake_1_d: "Mixing every ore you own dilutes multipliers and usually fails to trigger traits. Stick to two to four ores that support one goal, and confirm the percentages in the crafting calculator.",
+                mistake_2: "Mistake 2: wasting rare ores on throwaway gear", mistake_2_d: "Legendary and Mythical ores vanish fast if you use them to see what happens. Practice mini-games with cheaper ores, then spend rares on weapons or armor you intend to keep. The inventory optimizer helps you schedule those crafts.",
+                mistake_3: "Mistake 3: ignoring traits completely", mistake_3_d: "Traits often separate good items from broken ones. Decide which trait matters, make sure the trait ore is a large enough share (10% or more), and avoid conflicting traits in one recipe unless you truly need them together.",
+                g_faq_title: "Forge crafting FAQ: quick answers",
+                g_q1: "Does a higher multiplier always mean a better item?", g_a1: "Higher multipliers are usually good, but the right traits and item type can beat a raw multiplier spike. A slightly lower multiplier with perfect traits can outperform a higher one with useless effects.",
+                g_q2: "How many ores should I use in one craft?", g_a2: "Most The Forge crafting recipes run on two to four ores. More than that dilutes traits and drags your average multiplier down.",
+                g_q3: "Is there a perfect The Forge crafting recipe?", g_a3: "No universal best. Depends on playstyle and inventory.",
+                last_check_title: "Last Forge crafting checks before you craft", last_check_d: "Spend rares only after a quick audit: make sure trait ores clear the 10/20/30 thresholds, warm up mini-games, then run your mix through the crafting calculator or inventory optimizer to confirm every ore has a job.",
+                footer_disclaimer: "The Forge Calculator is a fan-made tool. Not affiliated with Roblox.", footer_privacy: "Privacy Policy", footer_contact: "Contact", footer_faq_link: "FAQs"
+            },
+            zh: {
+                nav_calculator: "計算機", nav_optimizer: "庫存優化", nav_faq: "指南", nav_wiki: "維基", nav_mining: "採礦",
+                toc_title: "目錄", toc_about: "關於計算器", toc_how_works: "運作原理", toc_usage: "如何使用", toc_calc_faq: "計算器問答", toc_crafting_guide: "鍛造指南 (開始)", toc_mini_games: "小遊戲教學", toc_ores_traits: "礦石與特性", toc_thresholds: "礦石閾值", toc_goals: "鍛造目標", toc_mistakes: "常見錯誤", toc_guide_faq: "鍛造問答",
+                page_title: "The Forge 計算器與鍛造完全指南",
+                what_is_calc: "什麼是 The Forge 計算器？", calc_subtitle: "Roblox 遊戲 The Forge 的專用計算器",
+                calc_desc_1: "The Forge 的遊戲機制非常深奧，依賴於涉及礦石重量、稀有度平均值和隱藏概率表的複雜算法。瞎猜的代價很高。在計劃不周的鍛造上浪費辛苦賺來的精華和高階礦石，可能會讓您的進度倒退數小時。這就是 The Forge 計算器成為您最有價值資產的地方。",
+                calc_desc_2: "The Forge 計算器旨在彌合 RNG（隨機數生成）與策略之間的差距。通過分析遊戲的底層機制，此計算器使玩家能夠在接近鐵砧之前就可視化他們的結果。它通過模擬礦石成分、特性、預估傷害和護甲生命值，並根據庫存建議有效的鍛造，幫助玩家規劃鍛造。",
+                calc_desc_3: "在一個每一塊礦石都很重要的遊戲中，The Forge 計算器是您的戰略顧問。它消除了鍛造中的盲目賭博成分，取而代之的是數據驅動的決策。",
+                how_works_title: "The Forge 計算器如何運作？", bridge_rng: "彌合 RNG 與策略之間的差距", what_calculates: "The Forge 計算器實際計算什麼",
+                prob_prediction: "概率與結果預測", prob_desc: "The Forge 計算器進行概率和結果預測，而不是隨機猜測。它獲取您選擇的礦石，並通過 The Forge 鍛造系統中使用的相同類型的概率表和機制來運行它們，以估算武器和護甲的結果。",
+                data_decisions: "數據驅動的決策", data_desc: "它使用源自遊戲機制的鍛造概率表來計算每種可能結果的可能性。計算器顯示不同物品類型的百分比機率，突出特性的激活和強度，並可視化預期傷害、屬性和機率——幫助您在花費寶貴資源之前進行規劃。",
+                key_variables: "The Forge 計算器中的關鍵變量", var_world: "世界 (World)", var_world_desc: "The Forge 中的不同世界（例如世界 1、世界 2、世界 3）具有不同的概率分佈和礦石池，因此相同的礦石混合可能會根據您鍛造的世界給出不同的機率。",
+                var_ores: "礦石 (Ores)", var_ores_desc: "每種礦石都有一個倍率值（影響基礎屬性）和一個稀有度/特性配置文件。計算器使用您選擇的礦石組合——最多四種不同類型——來確定這些因素如何影響可能的結果。",
+                var_traits: "特性 (Traits)", var_traits_desc: "特性是當某種礦石佔總礦石混合物的至少 10% 時激活的特殊屬性。該特性的強度隨百分比增加，最高約為 30%。例如，如果某種增加火焰傷害的礦石佔混合物的 20%，其相關特性將比僅佔 10% 時貢獻更多效果。",
+                data_sources: "數據來源與更新", data_sources_desc: "The Forge 計算器的概率表和倍率值基於從 The Forge 遊戲本身提取的機制，通常結合社區驗證的測試。倍率值、特性激活規則和結果分佈被建模以匹配 The Forge 在實際遊戲中處理礦石成分、概率和屬性輸出的方式。雖然結果對於給定模型是精確的，但實際的遊戲內結果仍涉及隨機性，因此計算器代表預測的期望，而非保證。",
+                how_to_use: "如何使用 The Forge 計算器", intuitive_design: "直觀設計，無縫融入遊戲玩法",
+                step1_title: "步驟 1：選擇礦石與模式", step1_desc: "首先將您當前的礦石庫存輸入儀表板。選擇「武器」或「護甲」模式。界面允許您從遊戲中當前所有可用的礦石中進行選擇，從基礎的石頭和銅到稀有的終局材料。",
+                step2_title: "步驟 2：預覽結果", step2_desc: "計算器根據您的輸入自動運行數千次微模擬。幾秒鐘內，它會生成詳細報告：成功概率、倍率、預估傷害/防禦、DPS、變體、成分與特性以及鍛造機率。",
+                step3_title: "步驟 3：更改輸入並重新運行", step3_desc: "您可以根據需要更改輸入並多次重新運行計算器。找到一種可以最大化您的倍率和鍛造機率的方法。",
+                step4_title: "步驟 4：優化", step4_desc: "如果結果不如預期，請使用「鍛造優化器」功能。引擎將建議添加或移除特定礦石，將屬性推向更高的階層。",
+                calc_faq_title: "The Forge 計算器常見問題", calc_faq_subtitle: "關於 The Forge 和計算器的常見疑問",
+                faq_c_1_q: "The Forge Calculator 與 Roblox 官方有關嗎？", faq_c_1_a: "沒有。這是由熱情玩家開發的粉絲工具，未經 Roblox 或遊戲開發者官方認可。它是為了幫助社區更好地理解遊戲機制而創建的。",
+                faq_c_2_q: "計算器有多準確？", faq_c_2_a: "在重量等級和階級平均值方面非常準確。但請記住，遊戲使用 RNG（隨機數生成）。雖然我們可以預測概率（例如「80% 機率獲得巨劍」），但無法保證單次鍛造的結果。",
+                faq_c_3_q: "為什麼它建議的武器與我得到的不同？", faq_c_3_a: "這通常是由於「重量」機制。如果您的礦石組合正好處於兩種類型之間的邊界（例如太刀與巨劍之間），遊戲會擲硬幣決定。計算器會顯示這種百分比分割。",
+                faq_c_4_q: "計算器能預測神話種族重骰嗎？", faq_c_4_a: "我們正在開發種族重骰（如惡魔或天使）的部分。目前，該工具專注於武器和護甲鍛造系統。",
+                faq_c_5_q: "會有新礦石更新嗎？", faq_c_5_a: "是的。我們的目標是在更新發布後 24 小時內更新數據庫以反映新材料。",
+                faq_c_6_q: "什麼是「稀釋規則」，為什麼我的屬性很低？", faq_c_6_a: "將高階礦石（如秘銀）與低階「填充」礦石（如石頭）混合會平均化倍率，大幅降低最終裝備的屬性。通常使用少量高質量礦石比用弱材料稀釋礦石池更好。",
+                faq_c_7_q: "為什麼我一重生就立即死亡？", faq_c_7_a: "您可能堆疊了太多「玻璃大炮」特性（通常來自眼礦）。如果您的總最大生命值減少達到 -100%，您的生命值將為 0 並立即死亡。",
+                faq_c_8_q: "坩堝中礦石的順序重要嗎？", faq_c_8_a: "不重要。遊戲僅計算總重量和成分百分比。將傳奇礦石放在頂部或底部不會改變結果。",
+                faq_c_9_q: "升級鍛造最快的方法是什麼？", faq_c_9_a: "目前，鍛造高重量物品如巨型劍（使用 30+ 礦石）產生的 XP 最多。單次鍛造處理的材料越多，經驗增益越高。",
+                faq_c_10_q: "礦石特性如何運作？", faq_c_10_a: "某些礦石帶有隱藏特性。它們根據成分百分比激活。計算器會準確顯示您可能獲得的被動效果。",
+                guide_title: "The Forge 鍛造指南（初學者到進階）", guide_subtitle: "通過我們的綜合指南掌握 The Forge 鍛造系統。學習小遊戲、礦石、倍率和特性，打造強大的武器和護甲。",
+                tldr_title: "給繁忙玩家的快速摘要", tldr_1: "<strong>鍛造 = 三個小遊戲。</strong> 選擇物品，添加礦石，然後熔煉、澆鑄和錘擊。乾淨的時機和準確性提高品質；草率的操作會降低品質。",
+                tldr_2: "<strong>礦石決定屬性。</strong> 每種礦石都有稀有度、倍率，有時還有特性。最終倍率本質上是您投入礦石的加權平均值。",
+                tldr_3: "<strong>特性需要足夠的佔比才能觸發。</strong> 目標是有意義的百分比（考慮 10%/20%/30% 閾值），以便特性實際應用於成品。",
+                tldr_4: "<strong>稀有礦石值得規劃。</strong> 花費普通和不常見礦石來學習小遊戲；保存傳奇、神話和神聖礦石用於您將保留的武器和護甲。",
+                tldr_5: "<strong>使用工具而不是猜測。</strong> 先用計算器模擬混合，用庫存優化器決定花費什麼，並參考最佳鍛造設置。",
+                minigames_title: "Roblox The Forge 鍛造小遊戲：如何運作", minigames_intro: "鍛造循環每次都遵循相同的節奏：",
+                mg_step1: "1. 哪裡鍛造：", mg_step1_d: "鐵砧位於 Stonewake's Cross，在藥水商人和符文製造師之間。追蹤指南針上的鐵砧圖標並走到坩堝前開始。",
+                mg_step2: "2. 選擇您要鍛造的物品：", mg_step2_d: "選擇武器或護甲，然後選擇確切類型（匕首、太刀、輕型、中型或重型護甲等）。",
+                mg_step3: "3. 將礦石加入坩堝：", mg_step3_d: "混合一些礦石；觀察實時倍率。匹配您在計算器中計劃的內容，以便遊戲內配方反映模擬和特性閾值。",
+                mg_smelt: "熔煉：填滿熱量條", mg_smelt_d: "鼓動風箱直到熱量條充滿並穩定。在左側用力鼓動風箱以快速最大化熱量條。中途讓條下降會降低品質；如果下降請繼續鼓動。短暫下降可恢復；長時間下降有降低品質階層的風險。在花費稀有礦石之前，使用便宜的礦石練習節奏。",
+                mg_pour: "澆鑄：保持在黃色區域內", mg_pour_d: "金屬流動時將指示器保持在黃色區域內。按住並釋放鼠標以升高或降低白色標記；在黃色區域內的時間越長，澆鑄得分越高。微調優於大範圍擺動——避免超出條邊緣。居中時間越長，影響最終品質的澆鑄得分就越好。",
+                mg_hammer: "錘擊：連鎖完美打擊並完成", mg_hammer_d: "乾淨地擊中時機提示。當圓圈接觸內環時點擊以獲得「完美」打擊——乾淨的時機加上良好的礦石混合可解鎖最佳數值。完美連擊提高品質；即使有很好的礦石混合，失誤也會拉低品質。專注於節奏而不是速度——一致的時機比快速點擊更重要。",
+                rarity_title: "鍛造礦石稀有度、倍率和特性詳解", rarity_h: "礦石稀有度", rarity_d: "稀有度通常從普通 -> 不常見 -> 稀有 -> 史詩 -> 遺跡 -> 傳奇 -> 神聖 -> 神話。更高的稀有度帶來更好的倍率、更高的售價和更頻繁的特性。",
+                mult_h: "鍛造倍率（為什麼您的混合很重要）", mult_d: "遊戲根據您使用的每種礦石的數量平均您的礦石倍率。一堆低倍率的普通礦石會拉低結果。集中高倍率礦石可保持平均值高。這就是仔細的計算器規劃得到回報的地方。",
+                traits_h: "鍛造特性與閾值", traits_d: "許多中後期礦石增加了額外的護甲或 HP、暴擊率、閃避、燃燒傷害或 AoE 爆炸等特性。特性僅在礦石佔配方的有意義份額時適用，通常認為是 10% 或更多，在 20% 和 30% 時效果更強。在鍛造之前檢查計算器中的特性百分比。",
+                types_h: "您可以鍛造的武器和護甲",
+                threshold_title: "鍛造特性閾值與礦石數量", threshold_source: "來源：Online Station 的 The Forge 鍛造指南。", th_item: "物品", th_min: "最少礦石 (最小 %)", th_rec: "推薦數量 (推薦 %)",
+                goals_title: "簡單的鍛造目標（以及如何實現）",
+                goal_1: "1) 早期生存（島嶼 1 和島嶼 2 早期）", goal_1_d: "主要使用具有穩定倍率的稀有和史詩礦石。保存傳奇和神話礦石直到您熟悉小遊戲。優先考慮 HP 或護甲特性而非華麗的傷害效果。在計算器中運行一些混合來比較坦克與傷害配方，然後鍛造能讓您活下來的裝備。",
+                goal_2: "2) 中期傷害構建（在洞穴中舒適，刷金幣）", goal_2_d: "將更好的稀有和傳奇礦石投入您的主武器。追求暴擊、燃燒、AoE 或速度等特性以快速清理怪物。保持護甲平衡，以便您仍能在失誤中生存。從最佳設置開始，在計算器中調整，然後記下您想在遊戲中鍛造的確切混合。",
+                goal_3: "3) 後期或終局構建（深層洞穴，稀有礦石刷取）", goal_3_d: "為長期裝備保留最高倍率的神話和神聖礦石。確保特性礦石佔有足夠的份額以觸發；在花費之前檢查 10%、20% 和 30% 閾值。練習小遊戲直到完美連擊一致——在這個階層浪費稀有礦石很心痛。使用庫存優化器決定現在燃燒哪些礦石以及為最終鍛造保存哪些。",
+                mistakes_title: "常見鍛造錯誤（以及如何避免）",
+                mistake_1: "錯誤 1：什麼都放一點", mistake_1_d: "混合您擁有的每種礦石會稀釋倍率，通常無法觸發特性。堅持使用支持一個目標的兩到四種礦石，並在計算器中確認百分比。",
+                mistake_2: "錯誤 2：在過渡裝備上浪費稀有礦石", mistake_2_d: "如果您用傳奇和神話礦石來測試效果，它們會很快消失。先用便宜的礦石練習小遊戲，然後將稀有礦石用於您打算保留的武器或護甲。庫存優化器可幫助您安排這些鍛造。",
+                mistake_3: "錯誤 3：完全忽略特性", mistake_3_d: "特性通常區分好物品和壞物品。決定哪個特性重要，確保特性礦石佔足夠大的份額（10% 或更多），並且除非您真的需要它們在一起，否則避免在一個配方中出現衝突的特性。",
+                g_faq_title: "鍛造指南問答：快速回答",
+                g_q1: "更高的倍率總是意味著更好的物品嗎？", g_a1: "更高的倍率通常是好的，但正確的特性和物品類型可以勝過純粹的倍率峰值。稍低的倍率加上完美的特性可以勝過具有無用效果的高倍率。",
+                g_q2: "一次鍛造應該使用多少礦石？", g_a2: "大多數鍛造配方使用兩到四種礦石。超過這個數量會稀釋特性並拉低您的平均倍率。",
+                g_q3: "有完美的鍛造配方嗎？", g_a3: "沒有通用的最佳配方。正確的配方取決於您的遊戲風格（玻璃大炮、坦克或平衡）、您當前的礦石庫存以及您擊中完美時機的乾淨程度。這就是為什麼在計算器中測試可以節省時間。",
+                last_check_title: "鍛造前的最後檢查", last_check_d: "僅在快速審核後花費稀有礦石：確保特性礦石清除 10/20/30 閾值，用便宜的礦石預熱三個小遊戲，然後通過計算器或庫存優化器運行您的混合以確認每塊礦石都有作用。",
+                footer_disclaimer: "The Forge Calculator 是粉絲製作的工具。與 Roblox 無關。", footer_privacy: "隱私政策", footer_contact: "聯繫我們", footer_faq_link: "常見問題"
+            }
+        };
+
+        const LS_LANG_KEY = 'forge_lang_pref';
+        let currentLang = 'en';
+        const currentLangSpan = document.getElementById('current-lang');
+
+        // Init Lang from Storage
+        function initLanguage() {
+            const saved = localStorage.getItem(LS_LANG_KEY);
+            if (saved === 'zh' || saved === 'en') {
+                currentLang = saved;
+            } else {
+                currentLang = 'en';
+            }
+            currentLangSpan.innerText = currentLang.toUpperCase();
+            applyLanguage();
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'zh' : 'en';
+            localStorage.setItem(LS_LANG_KEY, currentLang);
+            currentLangSpan.innerText = currentLang.toUpperCase();
+            applyLanguage();
+        }
+
+        function applyLanguage() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (I18N[currentLang][key]) {
+                    el.innerHTML = I18N[currentLang][key];
+                }
+            });
+            
+            // Highlight active TOC
+            updateActiveToc();
+        }
+
+        // TOC Active State Logic
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.toc-link');
+
+        function updateActiveToc() {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (window.scrollY >= sectionTop - 150) {
+                    current = section.getAttribute('id');
+                }
+            });
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (current && link.getAttribute('href').includes(current)) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', updateActiveToc);
+
+        // Initialize
+        initLanguage();
+    </script>
+</body>
+</html>
